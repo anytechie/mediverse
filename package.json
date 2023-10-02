@@ -1,5 +1,5 @@
 {
-  "name": "vite-boilerplate",
+  "name": "tma-healthcare",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -11,7 +11,10 @@
   },
   "dependencies": {
     "@twa-dev/sdk": "^6.7.1",
+    "@types/node": "^20.8.0",
     "@vitejs/plugin-basic-ssl": "^1.0.1",
+    "@vkruglikov/react-telegram-web-app": "^2.1.4",
+    "antd": "^5.9.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
@@ -25,6 +28,7 @@
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.3",
     "typescript": "^5.0.2",
-    "vite": "^4.4.5"
+    "vite": "^4.4.5",
+    "vite-plugin-mkcert": "^1.16.0"
   }
 }
