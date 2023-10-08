@@ -108,29 +108,51 @@ export const DoctorDashboard: FC<{
           </Button>
         </div>
         <Tabs defaultActiveKey="1" centered>
-          <TabPane tab="Upcoming Appointments" key="1">
+        <TabPane tab="Upcoming Appointments" key="1">
             {upcomingAppointments.map((app) => (
-              <div key={app.id}>
-                <p>Patient Name: {app.patientName}</p>
-                <p>Date: {app.date}</p>
-                <p>Time: {app.slot}</p>
-                <Button
-                  onClick={() => navigate(`/resolve_appointment/${app.id}`)}
-                >
-                  Consult
-                </Button>
+              <div key={app.id} className="profile">
+                <img
+                  src={
+                    // Placeholder image for now
+                    "https://images.pexels.com/photos/7242908/pexels-photo-7242908.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=150"
+                  }
+                  className="profile-img"
+                  alt={`Patient ${app.patientName}`}
+                />
+                <div>
+                  <h3 className="profile-name">{app.patientName}</h3>
+                  <p className="profile-role">Date: {app.date}</p>
+                  <p className="profile-role">Time: {app.slot}</p>
+                </div>
+                <div className="text-center">
+                  <Button onClick={() => navigate(`/resolve_appointment/${app.id}`)}>
+                    Consult
+                  </Button>
+                </div>
               </div>
             ))}
           </TabPane>
           <TabPane tab="Past Appointments" key="2">
             {pastAppointments.map((app) => (
-              <div key={app.id}>
-                <p>Patient Name: {app.patientName}</p>
-                <p>Date: {app.date}</p>
-                <p>Time: {app.slot}</p>
-                <Button onClick={() => navigate(`/past_appointment_doctor/${app.id}`)}>
-                  View
-                </Button>
+              <div key={app.id} className="profile">
+                <img
+                  src={
+                    // Placeholder image for now
+                    "https://images.pexels.com/photos/7242908/pexels-photo-7242908.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=150"
+                  }
+                  className="profile-img"
+                  alt={`Patient ${app.patientName}`}
+                />
+                <div>
+                  <h3 className="profile-name">{app.patientName}</h3>
+                  <p className="profile-role">Date: {app.date}</p>
+                  <p className="profile-role">Time: {app.slot}</p>
+                </div>
+                <div className="text-center">
+                  <Button onClick={() => navigate(`/past_appointment_doctor/${app.id}`)}>
+                    View
+                  </Button>
+                </div>
               </div>
             ))}
           </TabPane>

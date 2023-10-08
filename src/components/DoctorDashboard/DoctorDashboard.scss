@@ -12,7 +12,42 @@
       font-size: 1.5rem; // Adjust font size as needed
       font-weight: bold;
     }
+
   }
+
+  .profile {
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    border-top: 1px solid grey;
+    border-bottom: 1px solid grey;
+    align-items: center;
+
+    .profile-img {
+      height: 140px;
+      min-width: 140px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    .profile-name {
+      font-size: 1.2rem;
+      font-weight: bold;
+    }
+
+    .profile-role {
+      color: #9b9b9b;
+      font-size: 0.9rem;
+    }
+
+    .text-center {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+}
 
   .logout-button {
     margin-left: auto;

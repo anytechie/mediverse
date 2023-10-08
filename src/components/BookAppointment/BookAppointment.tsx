@@ -22,6 +22,7 @@ export const BookAppointment: FC<{
 }> = () => {
   const { doctorId } = useParams();
   const [doctor, setDoctor] = useState(null);
+  const [patientName, setPatientName] = useState("");
   const navigate = useNavigate();
   const [colorScheme, themeParams] = useThemeParams();
 
@@ -50,6 +51,20 @@ export const BookAppointment: FC<{
 
     fetchDoctor();
   }, [doctorId]);
+
+  useEffect(() => {
+    const fetchPatientName = async () => {
+      const patientId = window.Telegram.WebApp.initDataUnsafe.user.id.toString();
+      const patientRef = doc(db, "patients", patientId);
+      const docSnap = await getDoc(patientRef);
+      if (docSnap.exists()) {
+        setPatientName(docSnap.data().name);
+      }
+    };
+
+    fetchPatientName();
+  }, []);
+
   const currentDate = new Date();
   const minDate = `${currentDate.getFullYear()}-${String(
     currentDate.getMonth() + 1
@@ -118,6 +133,8 @@ export const BookAppointment: FC<{
       await addDoc(collection(db, "appointments"), {
         doctorId,
         patientId,
+        patientName,
+        doctorName: doctor.name,
         date: formData.date,
         slot: formData.time,
         description: formData.description,
@@ -135,7 +152,7 @@ export const BookAppointment: FC<{
       );
       window.Telegram.WebApp.MainButton.offClick(handleBookAppointment);
     };
-  }, [navigate, formData, doctorId]);
+  }, [navigate, formData, doctorId, patientName, doctor.name]);
 
   useEffect(() => {
     window.Telegram.WebApp.MainButton.show();

@@ -10,8 +10,12 @@
   --default-font: "Lato", sans-serif;
 }
 
+* {
+  font-family: var(--default-font) !important;
+}
+
 body {
-  font-family: var(--default-font);
+  font-family: var(--default-font) !important;
   font-size: 13px;
   line-height: 16px;
   font-weight: 400;

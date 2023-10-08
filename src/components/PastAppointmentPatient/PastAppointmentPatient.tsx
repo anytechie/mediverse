@@ -1,9 +1,11 @@
 import { useState, useEffect, FC, DispatchWithoutAction } from "react";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../../firebase";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { ConfigProvider, theme } from "antd";
 import { useThemeParams } from "@vkruglikov/react-telegram-web-app";
+import Patient from "../../assets/patient.png";
+import "./PastAppointmentPatient.scss";
 
 export const PastAppointmentPatient: FC<{
     onChangeTransition: DispatchWithoutAction;
@@ -11,6 +13,8 @@ export const PastAppointmentPatient: FC<{
   const { appointmentId } = useParams();
   const [appointment, setAppointment] = useState(null);
   const [colorScheme, themeParams] = useThemeParams();
+  const navigate = useNavigate();
+
 
   useEffect(() => {
     const fetchAppointment = async () => {
@@ -23,6 +27,21 @@ export const PastAppointmentPatient: FC<{
 
     fetchAppointment();
   }, [appointmentId]);
+
+  useEffect(() => {
+    const handleBackButtonClick = () => {
+      navigate(-1);
+    };
+    window.Telegram.WebApp.onEvent("backButtonClicked", handleBackButtonClick);
+    window.Telegram.WebApp.BackButton.show();
+    return () => {
+      window.Telegram.WebApp.offEvent(
+        "backButtonClicked",
+        handleBackButtonClick
+      );
+      window.Telegram.WebApp.BackButton.hide();
+    };
+  }, [navigate]);
 
   return (
     <ConfigProvider
@@ -42,10 +61,12 @@ export const PastAppointmentPatient: FC<{
           : undefined
       }
     >
-      <div className="past_appointment">
+      <div className="past_appointment_patient">
         {appointment && (
           <>
-            <h2>Patient: {appointment.patientName}</h2>
+            <img src={Patient} alt="patient" />
+
+            <h2>Dr. {appointment.doctorName}</h2>
             <p>Date: {appointment.date}</p>
             <p>Time: {appointment.slot}</p>
             <p>Diagnosis: {appointment.diagnosis}</p>
