@@ -2,11 +2,11 @@ import { DispatchWithoutAction, FC, useEffect, useState } from "react";
 import { useThemeParams } from "@vkruglikov/react-telegram-web-app";
 import { ConfigProvider, theme, Button } from "antd";
 import DoctorPatient from "../../assets/doctor_patient.json";
-import Loading from "../../assets/doctor.json";
 import Lottie from "react-lottie-player";
 import { useNavigate } from "react-router-dom";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "../../firebase"; // Adjust the path as per your project structure
+import Loader from "../Loader/Loader";
 
 export const LandingPage: FC<{
   onChangeTransition: DispatchWithoutAction;
@@ -19,7 +19,7 @@ export const LandingPage: FC<{
   
   useEffect(() => {
     // check user exists and logged in
-    const checkUserExistsAndLoggedIn = async () => {
+    const checkUserExistsAndLoggedInPatient = async () => {
       const docRef = doc(db, "patients", userId.toString());
       const docSnap = await getDoc(docRef);
       if (docSnap.exists()) {
@@ -35,7 +35,24 @@ export const LandingPage: FC<{
       }
       setLoading(false);
     }
-    checkUserExistsAndLoggedIn();
+    const checkUserExistsAndLoggedInDoctor = async () => {
+      const docRef = doc(db, "patients", userId.toString());
+      const docSnap = await getDoc(docRef);
+      if (docSnap.exists()) {
+        // check user.loggedIn
+        const data = docSnap.data();
+        if (data?.loggedIn) {
+          // user is logged in
+          navigate("/patient_dashboard");
+        }
+      } else {
+        // user does not exist
+        window.Telegram.WebApp.MainButton.setText("REGISTER AS A PATIENT");
+      }
+      setLoading(false);
+    }
+    checkUserExistsAndLoggedInPatient();
+    checkUserExistsAndLoggedInDoctor();
   }, [navigate, userId]);
     
   const checkUserExists = async (collectionName: string) => {
@@ -82,14 +99,7 @@ export const LandingPage: FC<{
 
   if (loading) {
     return (
-      <div className="d-flex justify-content-center align-items-center" style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', zIndex: 9999 }}>
-        <Lottie
-          animationData={Loading}
-          play
-          loop
-          style={{ width: '80%', height: '80%' }}
-        />
-      </div>
+      <Loader />
     );
   }
 

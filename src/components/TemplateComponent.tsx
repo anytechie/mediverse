@@ -15,11 +15,11 @@ export const Template: FC<{
     const handleBackButtonClick = () => {
       navigate(-1);
     };
-    Telegram.WebApp.onEvent("backButtonClicked", handleBackButtonClick);
-    Telegram.WebApp.BackButton.show();
+    window.Telegram.WebApp.onEvent("backButtonClicked", handleBackButtonClick);
+    window.Telegram.WebApp.BackButton.show();
     return () => {
-      Telegram.WebApp.offEvent("backButtonClicked", handleBackButtonClick);
-      Telegram.WebApp.BackButton.hide();
+      window.Telegram.WebApp.offEvent("backButtonClicked", handleBackButtonClick);
+      window.Telegram.WebApp.BackButton.hide();
     };
   }, [navigate]);
 

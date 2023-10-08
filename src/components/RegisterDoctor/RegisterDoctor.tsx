@@ -21,6 +21,7 @@ export const RegisterDoctor: FC<{
   onChangeTransition: DispatchWithoutAction;
 }> = () => {
   const [colorScheme, themeParams] = useThemeParams();
+  const userId = window.Telegram.WebApp.initDataUnsafe.user.id;
   const [formData, setFormData] = useState({
     name: "",
     speciality: "",
@@ -29,7 +30,8 @@ export const RegisterDoctor: FC<{
     consultationFee: "20",
     startTime: "10:00",
     endTime: "18:00",
-    email: "", // Add this line
+    email: "",
+    loggedIn: true,
   });
 
   const [currentStep, setCurrentStep] = useState(1);
@@ -67,10 +69,10 @@ export const RegisterDoctor: FC<{
             formData.email === "" ||
             formData.speciality === "")
         ) {
-          Telegram.WebApp.showPopup({
+          window.Telegram.WebApp.showPopup({
             title: "Error",
             message: "Please fill all the fields",
-            buttons: [{ type: "ok", text: "OK" }],
+            buttons: [{ type: "ok" }],
           });
           return;
         }
@@ -81,10 +83,10 @@ export const RegisterDoctor: FC<{
             formData.location === "" ||
             formData.consultationFee === "")
         ) {
-          Telegram.WebApp.showPopup({
+          window.Telegram.WebApp.showPopup({
             title: "Error",
             message: "Please fill all the fields",
-            buttons: [{ type: "ok", text: "OK" }],
+            buttons: [{ type: "ok" }],
           });
           return;
         }
@@ -93,10 +95,10 @@ export const RegisterDoctor: FC<{
           currentStep === 3 &&
           (formData.startTime === "" || formData.endTime === "")
         ) {
-          Telegram.WebApp.showPopup({
+          window.Telegram.WebApp.showPopup({
             title: "Error",
             message: "Please fill all the fields",
-            buttons: [{ type: "ok", text: "OK" }],
+            buttons: [{ type: "ok" }],
           });
           return;
         }
@@ -116,23 +118,23 @@ export const RegisterDoctor: FC<{
         !formData.location ||
         !formData.consultationFee
       ) {
-        Telegram.WebApp.showPopup({
+        window.Telegram.WebApp.showPopup({
           title: "Error",
           message: "Please fill all the fields",
-          buttons: [{ type: "ok", text: "OK" }],
+          buttons: [{ type: "ok" }],
         });
         return;
       }
 
-      const doctorRef = doc(db, "doctors", formData.email); // Using the email as the document ID.
+      const doctorRef = doc(db, "doctors", userId.toString());
 
       // Check if doctor is already registered
       const docSnap = await getDoc(doctorRef);
       if (docSnap.exists()) {
-        Telegram.WebApp.showPopup({
+        window.Telegram.WebApp.showPopup({
           title: "Error",
           message: "Doctor with this email is already registered.",
-          buttons: [{ type: "ok", text: "OK" }],
+          buttons: [{ type: "ok" }],
         });
         return;
       }
@@ -141,6 +143,7 @@ export const RegisterDoctor: FC<{
       try {
         await setDoc(doctorRef, {
           name: formData.name,
+          id: userId.toString(),
           email: formData.email,
           speciality: formData.speciality,
           experience: formData.experience,
@@ -153,48 +156,47 @@ export const RegisterDoctor: FC<{
         });
 
         // If submission is successful, show a success message and then navigate to the next page
-        Telegram.WebApp.showPopup({
+        window.Telegram.WebApp.showPopup({
           title: "Success",
           message: "Doctor registered successfully!",
           buttons: [
             {
               type: "ok",
-              text: "OK",
-              onClick: () => navigate("/next-page"), // Replace "/next-page" with the actual path of the next page
             },
           ],
         });
+        navigate("/doctor_dashboard");
       } catch (error) {
         console.error("Error adding document: ", error);
-        Telegram.WebApp.showPopup({
+        window.Telegram.WebApp.showPopup({
           title: "Error",
           message: "Failed to register. Please try again.",
-          buttons: [{ type: "ok", text: "OK" }],
+          buttons: [{ type: "ok" }],
         });
       }
     };
 
     if (currentStep === 3) {
-      Telegram.WebApp.MainButton.setText("REGISTER");
+      window.Telegram.WebApp.MainButton.setText("REGISTER");
     } else {
-      Telegram.WebApp.MainButton.setText("NEXT");
+      window.Telegram.WebApp.MainButton.setText("NEXT");
     }
 
-    Telegram.WebApp.MainButton.onClick(onSubmit);
-    Telegram.WebApp.onEvent("backButtonClicked", handleBack);
+    window.Telegram.WebApp.MainButton.onClick(onSubmit);
+    window.Telegram.WebApp.onEvent("backButtonClicked", handleBack);
 
     return () => {
-      Telegram.WebApp.offEvent("backButtonClicked", handleBack);
-      Telegram.WebApp.MainButton.offClick(onSubmit);
+      window.Telegram.WebApp.offEvent("backButtonClicked", handleBack);
+      window.Telegram.WebApp.MainButton.offClick(onSubmit);
     };
-  }, [navigate, selectedWeekdays, currentStep, formData]);
+  }, [navigate, selectedWeekdays, currentStep, formData, userId]);
 
   useEffect(() => {
-    Telegram.WebApp.MainButton.show();
-    Telegram.WebApp.BackButton.show();
+    window.Telegram.WebApp.MainButton.show();
+    window.Telegram.WebApp.BackButton.show();
     return () => {
-      Telegram.WebApp.BackButton.hide();
-      Telegram.WebApp.MainButton.hide();
+      window.Telegram.WebApp.BackButton.hide();
+      window.Telegram.WebApp.MainButton.hide();
     };
   }, []);
 

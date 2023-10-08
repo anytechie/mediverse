@@ -57,20 +57,6 @@ export const PatientDashboard: FC<{
     fetchDoctors();
   }, []);
 
-  useEffect(() => {
-    const handleBackButtonClick = () => {
-      navigate(-1);
-    };
-    window.Telegram.WebApp.onEvent("backButtonClicked", handleBackButtonClick);
-    window.Telegram.WebApp.BackButton.show();
-    return () => {
-      window.Telegram.WebApp.offEvent(
-        "backButtonClicked",
-        handleBackButtonClick
-      );
-      window.Telegram.WebApp.BackButton.hide();
-    };
-  }, [navigate]);
 
   const filteredDoctors = doctors.filter(
     (doctor) =>
@@ -81,6 +67,10 @@ export const PatientDashboard: FC<{
       (doctor.location &&
         doctor.location.toLowerCase().includes(searchTerm.toLowerCase()))
   );
+
+  const handleBook = (id: any) => {
+    navigate(`/book_appointment/${id}`);
+  };
 
   return (
     <ConfigProvider
@@ -138,7 +128,7 @@ export const PatientDashboard: FC<{
               </p>
             </div>
             <div className="text-center">
-              <Button>Book Now</Button>
+              <Button onClick={() => handleBook(doctor.id)}>Book Now</Button>
               <p>No booking fee</p>
             </div>
           </div>

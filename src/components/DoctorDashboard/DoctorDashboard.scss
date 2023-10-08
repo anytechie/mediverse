@@ -1,0 +1,25 @@
+.doctor_dashboard {
+  padding: 1rem;
+
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0px 10px 10px 10px;
+    position: relative;
+
+    .welcome_message {
+      font-size: 1.5rem; // Adjust font size as needed
+      font-weight: bold;
+    }
+  }
+
+  .logout-button {
+    margin-left: auto;
+  }
+
+  .centered-tabs {
+    display: flex;
+    justify-content: center;
+  }
+}

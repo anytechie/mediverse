@@ -20,11 +20,13 @@ export const RegisterPatient: FC<{
   onChangeTransition: DispatchWithoutAction;
 }> = () => {
   const [colorScheme, themeParams] = useThemeParams();
+  const userId = window.Telegram.WebApp.initDataUnsafe.user.id.toString();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     age: "",
     loggedIn: true,
+    id: userId,
   });
 
   const navigate = useNavigate();
@@ -50,18 +52,12 @@ export const RegisterPatient: FC<{
       }
 
       try {
-        const userId = window.Telegram.WebApp.initDataUnsafe.user.id.toString();
         const patientRef = doc(db, "patients", userId); 
         await setDoc(patientRef, formData);
 
         window.Telegram.WebApp.showPopup({
           title: "Success",
           message: "Patient registered successfully!",
-          buttons: [
-            {
-              type: "ok",
-            },
-          ],
         });
         navigate("/patient_dashboard");
       } catch (error) {
