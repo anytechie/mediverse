@@ -15,7 +15,6 @@ import Lottie from "react-lottie-player";
 import { doc, setDoc } from "firebase/firestore";
 import { db } from "../../firebase";
 import StyledTextField from "../StyledTextField/StyledTextField";
-import { parseInitData } from "../twa/utils";
 
 export const RegisterPatient: FC<{
   onChangeTransition: DispatchWithoutAction;
@@ -25,6 +24,7 @@ export const RegisterPatient: FC<{
     name: "",
     email: "",
     age: "",
+    loggedIn: true,
   });
 
   const navigate = useNavigate();
@@ -50,8 +50,7 @@ export const RegisterPatient: FC<{
       }
 
       try {
-        const userData = parseInitData(window.Telegram.WebApp.initData);
-        const userId = userData.user.id.toString();
+        const userId = window.Telegram.WebApp.initDataUnsafe.user.id.toString();
         const patientRef = doc(db, "patients", userId); 
         await setDoc(patientRef, formData);
 

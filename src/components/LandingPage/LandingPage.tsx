@@ -1,23 +1,43 @@
-import { DispatchWithoutAction, FC } from "react";
+import { DispatchWithoutAction, FC, useEffect, useState } from "react";
 import { useThemeParams } from "@vkruglikov/react-telegram-web-app";
 import { ConfigProvider, theme, Button } from "antd";
-import DoctorPatient from "../../assets/doctor.json";
+import DoctorPatient from "../../assets/doctor_patient.json";
+import Loading from "../../assets/doctor.json";
 import Lottie from "react-lottie-player";
 import { useNavigate } from "react-router-dom";
-import { doc, getDoc } from "firebase/firestore";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "../../firebase"; // Adjust the path as per your project structure
-import { parseInitData } from "../twa/utils";
 
 export const LandingPage: FC<{
   onChangeTransition: DispatchWithoutAction;
 }> = () => {
   const [colorScheme, themeParams] = useThemeParams();
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const userId = window.Telegram.WebApp.initDataUnsafe.user.id;
 
-  const userData = parseInitData(window.Telegram.WebApp.initData);
-  const userId = userData.user.id;
-  console.log(userId, window.Telegram);
-
+  
+  useEffect(() => {
+    // check user exists and logged in
+    const checkUserExistsAndLoggedIn = async () => {
+      const docRef = doc(db, "patients", userId.toString());
+      const docSnap = await getDoc(docRef);
+      if (docSnap.exists()) {
+        // check user.loggedIn
+        const data = docSnap.data();
+        if (data?.loggedIn) {
+          // user is logged in
+          navigate("/patient_dashboard");
+        }
+      } else {
+        // user does not exist
+        window.Telegram.WebApp.MainButton.setText("REGISTER AS A PATIENT");
+      }
+      setLoading(false);
+    }
+    checkUserExistsAndLoggedIn();
+  }, [navigate, userId]);
+    
   const checkUserExists = async (collectionName: string) => {
     const userRef = doc(db, collectionName, userId.toString());
     const userSnap = await getDoc(userRef);
@@ -46,6 +66,10 @@ export const LandingPage: FC<{
     const exists = await checkUserExists("patients");
     if (exists) {
       window.Telegram.WebApp.MainButton.setText("ACCOUNT EXISTS, Logging in...");
+      const userRef = doc(db, "patients", userId.toString());
+      await updateDoc(userRef, {
+        loggedIn: true,
+      });
       navigate("/patient_dashboard");
     } else {
       // Navigate to patient registration page
@@ -55,6 +79,19 @@ export const LandingPage: FC<{
     window.Telegram.WebApp.MainButton.hide();
 
   };
+
+  if (loading) {
+    return (
+      <div className="d-flex justify-content-center align-items-center" style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', zIndex: 9999 }}>
+        <Lottie
+          animationData={Loading}
+          play
+          loop
+          style={{ width: '80%', height: '80%' }}
+        />
+      </div>
+    );
+  }
 
   return (
     <div>
@@ -80,6 +117,7 @@ export const LandingPage: FC<{
             <Lottie
               animationData={DoctorPatient}
               play
+              loop={false}
               style={{ width: 200, height: 200 }}
             />
             <h1

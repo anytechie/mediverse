@@ -1,8 +1,14 @@
 import { DispatchWithoutAction, FC, useEffect, useState } from "react";
-import { collection, getDocs } from "firebase/firestore";
+import {
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  updateDoc,
+} from "firebase/firestore";
 import { db } from "../../firebase"; // Adjust the path as per your project structure
 import "./PatientDashboard.scss";
-import { Button, ConfigProvider, Input, theme } from "antd";
+import { Button, ConfigProvider, theme } from "antd";
 import Search from "antd/es/input/Search";
 import { useNavigate } from "react-router-dom";
 import { useThemeParams } from "@vkruglikov/react-telegram-web-app";
@@ -14,6 +20,28 @@ export const PatientDashboard: FC<{
   const [searchTerm, setSearchTerm] = useState("");
   const [colorScheme, themeParams] = useThemeParams();
   const navigate = useNavigate();
+  const userId = window.Telegram.WebApp.initDataUnsafe.user.id;
+  const [userName, setUserName] = useState("");
+
+  useEffect(() => {
+    const fetchUserName = async () => {
+      const userRef = doc(db, "patients", userId.toString());
+      const userSnap = await getDoc(userRef);
+      if (userSnap.exists()) {
+        setUserName(userSnap.data().name);
+      }
+    };
+
+    fetchUserName();
+  }, [userId]);
+
+  const handleLogout = async () => {
+    const userRef = doc(db, "patients", userId.toString());
+    await updateDoc(userRef, {
+      loggedIn: false,
+    });
+    navigate("/");
+  };
 
   useEffect(() => {
     const fetchDoctors = async () => {
@@ -33,13 +61,16 @@ export const PatientDashboard: FC<{
     const handleBackButtonClick = () => {
       navigate(-1);
     };
-    Telegram.WebApp.onEvent("backButtonClicked", handleBackButtonClick);
-    Telegram.WebApp.BackButton.show();
+    window.Telegram.WebApp.onEvent("backButtonClicked", handleBackButtonClick);
+    window.Telegram.WebApp.BackButton.show();
     return () => {
-      Telegram.WebApp.offEvent("backButtonClicked", handleBackButtonClick);
-      Telegram.WebApp.BackButton.hide();
+      window.Telegram.WebApp.offEvent(
+        "backButtonClicked",
+        handleBackButtonClick
+      );
+      window.Telegram.WebApp.BackButton.hide();
     };
-  }, []);
+  }, [navigate]);
 
   const filteredDoctors = doctors.filter(
     (doctor) =>
@@ -70,6 +101,12 @@ export const PatientDashboard: FC<{
       }
     >
       <div className="patient_dashboard">
+        <div className="header">
+          <h2 className="welcome-message">{userName}'s Dashboard</h2>
+          <Button className="logout-button" onClick={handleLogout}>
+            Logout
+          </Button>
+        </div>
         <Search
           placeholder="Search by name, speciality, or location"
           allowClear
