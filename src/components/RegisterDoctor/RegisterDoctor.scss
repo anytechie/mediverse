@@ -1,19 +1,16 @@
-.form-control {
-    --border-width: 1px;
-    display: block;
+.contentWrapper {
+  .step {
+    transition: transform 0.3s ease-out;
+    display: flex;
+    flex-direction: column;
+    position: absolute;
     width: 100%;
-    height: 3.375rem;
-    padding: calc(.75rem - var(--border-width)) calc(.9rem - var(--border-width));
-    // material blue 500
-    border: var(--border-width) solid #2196f3;
-    border-radius: .25rem;
-    background: var(--tg-theme-bg-color);
-    color: var(--tg-theme-text-color) !important;
-    outline: none;
-    transition: border-color .15s ease;
-    word-break: break-word;
-    -webkit-appearance: none;
-    font-size: 1rem;
-    line-height: 1.25rem;
-    margin: 1rem 0;
+    transform: translateX(100%);
+    visibility: hidden;
+    &.active {
+      padding: 0 1rem;
+      visibility: visible;
+      transform: translateX(-50%);
+    }
+  }
 }

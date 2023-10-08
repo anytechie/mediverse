@@ -1,11 +1,11 @@
 :root {
-  --tg-theme-bg-color: #fff;
+  /* --tg-theme-bg-color: #fff;
   --tg-theme-text-color: #0a0a0a;
   --tg-theme-hint-color: #929292;
   --tg-theme-link-color: #207ae4;
   --tg-theme-button-color: #5bc8fb;
   --tg-theme-button-text-color: #fffeec;
-  --tg-theme-secondary-bg-color: #f3f2f9;
+  --tg-theme-secondary-bg-color: #f3f2f9; */
 
   --default-font: "Lato", sans-serif;
 }
@@ -15,15 +15,13 @@ body {
   font-size: 13px;
   line-height: 16px;
   font-weight: 400;
-  background-color: var(--block-bg-color);
-  color: var(--text-color);
+  background-color: var(--tg-theme-bg-color);
+  color: var( --tg-theme-text-color);
   color-scheme: var(--tg-color-scheme);
   margin: 0;
   padding: 0;
   width: 1px;
   min-width: 100%;
-  --block-bg-color: var(--tg-theme-bg-color);
-  --bg-color: var(--tg-theme-secondary-bg-color, #ebedf0);
   --animation: .15s ease;
   --page-animation-duration: .3s;
   --page-animation: var(--page-animation-duration) ease;
@@ -36,7 +34,7 @@ body {
   --placeholder-color: #999da1;
   --ripple-duration: .45s;
   --ripple-end-duration: .3s;
-  -webkit-user-select: none;
+  /* -webkit-user-select: none; */
   cursor: default;
 }
 

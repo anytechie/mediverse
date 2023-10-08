@@ -1,10 +1,10 @@
 import { DispatchWithoutAction, FC, useEffect } from "react";
-import "./DoctorDashboard.scss";
+import "./PatientDashboard.scss";
 import { useNavigate } from "react-router-dom";
 import { ConfigProvider, theme } from "antd";
 import { useThemeParams } from "@vkruglikov/react-telegram-web-app";
 
-export const DoctorDashboard: FC<{
+export const Template: FC<{
   onChangeTransition: DispatchWithoutAction;
 }> = () => {
   const navigate = useNavigate();
@@ -15,11 +15,11 @@ export const DoctorDashboard: FC<{
     const handleBackButtonClick = () => {
       navigate(-1);
     };
-    window.Telegram.WebApp.onEvent("backButtonClicked", handleBackButtonClick);
-    window.Telegram.WebApp.BackButton.show();
+    Telegram.WebApp.onEvent("backButtonClicked", handleBackButtonClick);
+    Telegram.WebApp.BackButton.show();
     return () => {
-      window.Telegram.WebApp.offEvent("backButtonClicked", handleBackButtonClick);
-      window.Telegram.WebApp.BackButton.hide();
+      Telegram.WebApp.offEvent("backButtonClicked", handleBackButtonClick);
+      Telegram.WebApp.BackButton.hide();
     };
   }, [navigate]);
 
@@ -41,9 +41,9 @@ export const DoctorDashboard: FC<{
           : undefined
       }
     >
-        <h1>Doctor Dashboard</h1>
+
     </ConfigProvider>
   );
 };
 
-export default DoctorDashboard;
+export default Template;

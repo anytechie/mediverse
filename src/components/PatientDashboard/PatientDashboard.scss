@@ -1,0 +1,27 @@
+.patient_dashboard {
+  padding: 1rem;
+  .profile {
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    border-top: 1px solid #e0e0e0; /* Adjust the color as needed */
+    border-bottom: 1px solid #e0e0e0; /* Adjust the color as needed */
+    align-items: center;
+  }
+
+  .profile-img {
+    height: 140px;
+    min-width: 140px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+  .profile-role {
+    color: #9b9b9b;
+    font-size: 0.9rem;
+  }
+  .profile-description {
+    padding-top: 15px;
+    line-height: 1.4;
+  }
+}

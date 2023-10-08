@@ -5,9 +5,7 @@ import {
   useEffect,
   useState,
 } from "react";
-import {
-  useThemeParams,
-} from "@vkruglikov/react-telegram-web-app";
+import { useThemeParams } from "@vkruglikov/react-telegram-web-app";
 import { ConfigProvider, theme } from "antd";
 import Doctor from "../../assets/doctor.json";
 import { useNavigate } from "react-router-dom";
@@ -17,6 +15,7 @@ import Lottie from "react-lottie-player";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import WeekdayPicker from "../WeekdayPicker/WeekdayPicker";
 import { db } from "../../firebase";
+import StyledTextField from "../StyledTextField/StyledTextField";
 
 export const RegisterDoctor: FC<{
   onChangeTransition: DispatchWithoutAction;
@@ -26,10 +25,14 @@ export const RegisterDoctor: FC<{
     name: "",
     speciality: "",
     experience: "",
-    startTime: "",
-    endTime: "",
+    location: "",
+    consultationFee: "20",
+    startTime: "10:00",
+    endTime: "18:00",
     email: "", // Add this line
   });
+
+  const [currentStep, setCurrentStep] = useState(1);
 
   const [selectedWeekdays, setSelectedWeekdays] = useState([0, 1, 2, 3, 4]);
 
@@ -46,33 +49,94 @@ export const RegisterDoctor: FC<{
   };
 
   useEffect(() => {
-    const handleBackButtonClick = () => {
-      navigate(-1);
+    const handleBack = () => {
+      if (currentStep > 1) {
+        setCurrentStep((prevStep) => prevStep - 1);
+      } else {
+        navigate(-1);
+      }
     };
     const onSubmit = async () => {
+      if (currentStep < 3) {
+        console.log(formData);
+
+        // ask user to fill all the fields
+        if (
+          currentStep === 1 &&
+          (formData.name === "" ||
+            formData.email === "" ||
+            formData.speciality === "")
+        ) {
+          Telegram.WebApp.showPopup({
+            title: "Error",
+            message: "Please fill all the fields",
+            buttons: [{ type: "ok", text: "OK" }],
+          });
+          return;
+        }
+
+        if (
+          currentStep === 2 &&
+          (formData.experience === "" ||
+            formData.location === "" ||
+            formData.consultationFee === "")
+        ) {
+          Telegram.WebApp.showPopup({
+            title: "Error",
+            message: "Please fill all the fields",
+            buttons: [{ type: "ok", text: "OK" }],
+          });
+          return;
+        }
+
+        if (
+          currentStep === 3 &&
+          (formData.startTime === "" || formData.endTime === "")
+        ) {
+          Telegram.WebApp.showPopup({
+            title: "Error",
+            message: "Please fill all the fields",
+            buttons: [{ type: "ok", text: "OK" }],
+          });
+          return;
+        }
+
+        setCurrentStep((prevStep) => prevStep + 1);
+        return;
+      }
+
       // Validate form data
-      if (!formData.name || !formData.email || !formData.speciality || !formData.experience || !formData.startTime || !formData.endTime) {
+      if (
+        !formData.name ||
+        !formData.email ||
+        !formData.speciality ||
+        !formData.experience ||
+        !formData.startTime ||
+        !formData.endTime ||
+        !formData.location ||
+        !formData.consultationFee
+      ) {
         Telegram.WebApp.showPopup({
           title: "Error",
           message: "Please fill all the fields",
-          buttons: [{ type: "ok", text: "OK" }]
+          buttons: [{ type: "ok", text: "OK" }],
         });
         return;
       }
-    
+
       const doctorRef = doc(db, "doctors", formData.email); // Using the email as the document ID.
-    
+
       // Check if doctor is already registered
       const docSnap = await getDoc(doctorRef);
       if (docSnap.exists()) {
         Telegram.WebApp.showPopup({
           title: "Error",
           message: "Doctor with this email is already registered.",
-          buttons: [{ type: "ok", text: "OK" }]
+          buttons: [{ type: "ok", text: "OK" }],
         });
         return;
       }
-    
+
       // If validation is successful and doctor is not already registered, proceed to submit data to Firestore
       try {
         await setDoc(doctorRef, {
@@ -80,11 +144,14 @@ export const RegisterDoctor: FC<{
           email: formData.email,
           speciality: formData.speciality,
           experience: formData.experience,
+          location: formData.location,
           days: selectedWeekdays,
           startTime: formData.startTime,
+          consultationFee: formData.consultationFee,
           endTime: formData.endTime,
+          appointments: [],
         });
-    
+
         // If submission is successful, show a success message and then navigate to the next page
         Telegram.WebApp.showPopup({
           title: "Success",
@@ -93,30 +160,43 @@ export const RegisterDoctor: FC<{
             {
               type: "ok",
               text: "OK",
-              onClick: () => navigate("/next-page") // Replace "/next-page" with the actual path of the next page
-            }
-          ]
+              onClick: () => navigate("/next-page"), // Replace "/next-page" with the actual path of the next page
+            },
+          ],
         });
       } catch (error) {
         console.error("Error adding document: ", error);
         Telegram.WebApp.showPopup({
           title: "Error",
           message: "Failed to register. Please try again.",
-          buttons: [{ type: "ok", text: "OK" }]
+          buttons: [{ type: "ok", text: "OK" }],
         });
       }
     };
-    Telegram.WebApp.onEvent("backButtonClicked", handleBackButtonClick);
-    Telegram.WebApp.MainButton.show();
-    Telegram.WebApp.MainButton.setText("REGISTER");
+
+    if (currentStep === 3) {
+      Telegram.WebApp.MainButton.setText("REGISTER");
+    } else {
+      Telegram.WebApp.MainButton.setText("NEXT");
+    }
+
     Telegram.WebApp.MainButton.onClick(onSubmit);
+    Telegram.WebApp.onEvent("backButtonClicked", handleBack);
+
     return () => {
-      Telegram.WebApp.MainButton.hide();
-      Telegram.WebApp.offEvent("backButtonClicked", handleBackButtonClick);
+      Telegram.WebApp.offEvent("backButtonClicked", handleBack);
       Telegram.WebApp.MainButton.offClick(onSubmit);
     };
-  }, [navigate, formData, selectedWeekdays]);
+  }, [navigate, selectedWeekdays, currentStep, formData]);
 
+  useEffect(() => {
+    Telegram.WebApp.MainButton.show();
+    Telegram.WebApp.BackButton.show();
+    return () => {
+      Telegram.WebApp.BackButton.hide();
+      Telegram.WebApp.MainButton.hide();
+    };
+  }, []);
 
   return (
     <div>
@@ -142,7 +222,6 @@ export const RegisterDoctor: FC<{
             <Lottie
               animationData={Doctor}
               play
-              //   loop={false}
               style={{ width: 200, height: 200 }}
             />
             <h1
@@ -156,52 +235,67 @@ export const RegisterDoctor: FC<{
           </header>
           <div className="contentWrapper">
             <Box component="form" sx={{ mt: 2 }}>
-              <input
-                className="form-control"
-                type="text"
-                placeholder="Name"
-                name="name"
-                onChange={handleInputChange}
-              />
-              <input
-                className="form-control"
-                type="email"
-                placeholder="Email"
-                name="email"
-                onChange={handleInputChange}
-              />
-              <input
-                className="form-control"
-                type="text"
-                placeholder="Speciality"
-                name="speciality"
-                onChange={handleInputChange}
-              />
-              <input
-                className="form-control"
-                type="number"
-                placeholder="Experience (Years)"
-                name="experience"
-                onChange={handleInputChange}
-              />
-              <h4>Working Days</h4>
-              <WeekdayPicker onChange={handleDaysChange} />
-              <h4>Start Time</h4>
-              <input
-                className="form-control"
-                type="time"
-                placeholder="Start Time"
-                name="startTime"
-                onChange={handleInputChange}
-              />
-              <h4>End Time</h4>
-              <input
-                className="form-control"
-                type="time"
-                placeholder="End Time"
-                name="endTime"
-                onChange={handleInputChange}
-              />
+              <div className={`step ${currentStep === 1 ? "active" : ""}`}>
+                <StyledTextField
+                  label="Name"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleInputChange}
+                />
+                <StyledTextField
+                  label="Email"
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleInputChange}
+                />
+                <StyledTextField
+                  label="Speciality"
+                  name="speciality"
+                  value={formData.speciality}
+                  onChange={handleInputChange}
+                />
+              </div>
+              <div className={`step ${currentStep === 2 ? "active" : ""}`}>
+                <StyledTextField
+                  label="Experience (Years)"
+                  type="number"
+                  name="experience"
+                  value={formData.experience}
+                  onChange={handleInputChange}
+                />
+                <StyledTextField
+                  label="Location (Area, City)"
+                  name="location"
+                  value={formData.location}
+                  onChange={handleInputChange}
+                />
+                <StyledTextField
+                  label="Consultation Fee ($)"
+                  type="number"
+                  name="consultationFee"
+                  value={formData.consultationFee}
+                  onChange={handleInputChange}
+                />
+              </div>
+              <div className={`step ${currentStep === 3 ? "active" : ""}`}>
+                <h4>Working Days</h4>
+                <WeekdayPicker onChange={handleDaysChange} />
+                <h4>Start Time</h4>
+                <StyledTextField
+                  type="time"
+                  name="startTime"
+                  value={formData.startTime}
+                  onChange={handleInputChange}
+                />
+                <h4>End Time</h4>
+                <StyledTextField
+                  type="time"
+                  name="endTime"
+                  value={formData.endTime}
+                  onChange={handleInputChange}
+                />
+              </div>
             </Box>
           </div>
         </div>

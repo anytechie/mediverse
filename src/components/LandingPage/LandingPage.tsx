@@ -3,12 +3,58 @@ import { useThemeParams } from "@vkruglikov/react-telegram-web-app";
 import { ConfigProvider, theme, Button } from "antd";
 import DoctorPatient from "../../assets/doctor.json";
 import Lottie from "react-lottie-player";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "../../firebase"; // Adjust the path as per your project structure
+import { parseInitData } from "../twa/utils";
 
 export const LandingPage: FC<{
   onChangeTransition: DispatchWithoutAction;
 }> = () => {
   const [colorScheme, themeParams] = useThemeParams();
+  const navigate = useNavigate();
+
+  const userData = parseInitData(window.Telegram.WebApp.initData);
+  const userId = userData.user.id;
+  console.log(userId, window.Telegram);
+
+  const checkUserExists = async (collectionName: string) => {
+    const userRef = doc(db, collectionName, userId.toString());
+    const userSnap = await getDoc(userRef);
+    return userSnap.exists();
+  };
+
+  const handleDoctorRegister = async () => {
+    window.Telegram.WebApp.MainButton.show();
+    window.Telegram.WebApp.MainButton.showProgress();
+    const exists = await checkUserExists("doctors");
+    if (exists) {
+      navigate("/doctor_dashboard");
+    } else {
+      // Navigate to doctor registration page
+      navigate("/register_doctor");
+    }
+    window.Telegram.WebApp.MainButton.hideProgress();
+    window.Telegram.WebApp.MainButton.hide();
+
+  };
+
+  const handlePatientRegister = async () => {
+    window.Telegram.WebApp.MainButton.show();
+
+    window.Telegram.WebApp.MainButton.showProgress();
+    const exists = await checkUserExists("patients");
+    if (exists) {
+      window.Telegram.WebApp.MainButton.setText("ACCOUNT EXISTS, Logging in...");
+      navigate("/patient_dashboard");
+    } else {
+      // Navigate to patient registration page
+      navigate("/register_patient");
+    }
+    window.Telegram.WebApp.MainButton.hideProgress();
+    window.Telegram.WebApp.MainButton.hide();
+
+  };
 
   return (
     <div>
@@ -34,7 +80,6 @@ export const LandingPage: FC<{
             <Lottie
               animationData={DoctorPatient}
               play
-              // loop={false}
               style={{ width: 200, height: 200 }}
             />
             <h1
@@ -55,19 +100,17 @@ export const LandingPage: FC<{
             </h2>
           </header>
           <div className="contentWrapper d-flex flex-column justify-content-center align-items-center">
-            <Link to="/register_doctor" className="m-2">
-              <Button type="primary" block>
+              <Button type="primary" block onClick={handleDoctorRegister}>
                 Register as a Doctor
               </Button>
-            </Link>
-            <Link to="/register_patient">
-              <Button type="primary" block>
+              <Button type="primary" onClick={handlePatientRegister}>
                 Register as a Patient
               </Button>
-            </Link>
           </div>
         </div>
       </ConfigProvider>
     </div>
   );
 };
+
+export default LandingPage;

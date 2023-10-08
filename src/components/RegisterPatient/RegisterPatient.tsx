@@ -1,25 +1,29 @@
-import { ChangeEvent, DispatchWithoutAction, FC, useState } from "react";
 import {
-  BackButton,
-  useShowPopup,
-  useThemeParams,
-} from "@vkruglikov/react-telegram-web-app";
+  ChangeEvent,
+  DispatchWithoutAction,
+  FC,
+  useEffect,
+  useState,
+} from "react";
+import { useThemeParams } from "@vkruglikov/react-telegram-web-app";
 import { ConfigProvider, theme } from "antd";
 import Patient from "../../assets/patient_signup.json";
 import { useNavigate } from "react-router-dom";
 import { Box } from "@mui/material";
 import "./RegisterPatient.scss";
 import Lottie from "react-lottie-player";
-import { MainButton } from "@vkruglikov/react-telegram-web-app";
+import { doc, setDoc } from "firebase/firestore";
+import { db } from "../../firebase";
+import StyledTextField from "../StyledTextField/StyledTextField";
+import { parseInitData } from "../twa/utils";
 
 export const RegisterPatient: FC<{
   onChangeTransition: DispatchWithoutAction;
 }> = () => {
   const [colorScheme, themeParams] = useThemeParams();
-  const showPopup = useShowPopup();
   const [formData, setFormData] = useState({
     name: "",
-    email: "", // Add this line
+    email: "",
     age: "",
   });
 
@@ -30,29 +34,64 @@ export const RegisterPatient: FC<{
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // eslint-disable-next-line no-undef
-  Telegram.WebApp.onEvent("backButtonClicked", () => {
-    navigate(-1);
-  });
+  useEffect(() => {
 
-  const onSubmit = async (values: any) => {
-    console.log(values);
-    const res = await showPopup({
-      title: "Register Doctor",
-      message: "Are you sure you want to register this doctor?",
-      buttons: [
-        {
-          type: "ok",
-          text: "Yes",
-        },
-        {
-          type: "destructive",
-          text: "No",
-        },
-      ],
-    });
-    console.log(res);
-  };
+    const handleBackButtonClick = () => {
+      navigate(-1);
+    };
+    const onSubmit = async () => {
+      if (!formData.name || !formData.email || !formData.age) {
+        window.Telegram.WebApp.showPopup({
+          title: "Error",
+          message: "Please fill all the fields",
+          buttons: [{ type: "ok" }],
+        });
+        return;
+      }
+
+      try {
+        const userData = parseInitData(window.Telegram.WebApp.initData);
+        const userId = userData.user.id.toString();
+        const patientRef = doc(db, "patients", userId); 
+        await setDoc(patientRef, formData);
+
+        window.Telegram.WebApp.showPopup({
+          title: "Success",
+          message: "Patient registered successfully!",
+          buttons: [
+            {
+              type: "ok",
+            },
+          ],
+        });
+        navigate("/patient_dashboard");
+      } catch (error) {
+        console.error("Error adding document: ", error);
+        window.Telegram.WebApp.showPopup({
+          title: "Error",
+          message: "Failed to register. Please try again.",
+          buttons: [{ type: "ok" }],
+        });
+      }
+    };
+
+    window.Telegram.WebApp.onEvent("backButtonClicked", handleBackButtonClick);
+    window.Telegram.WebApp.MainButton.setText("REGISTER");
+    window.Telegram.WebApp.MainButton.onClick(onSubmit);
+    return () => {
+      window.Telegram.WebApp.offEvent("backButtonClicked", handleBackButtonClick);
+      window.Telegram.WebApp.MainButton.offClick(onSubmit);
+    };
+  }, [formData, navigate]);
+
+  useEffect(() => {
+    window.Telegram.WebApp.MainButton.show();
+    window.Telegram.WebApp.BackButton.show();
+    return () => {
+      window.Telegram.WebApp.BackButton.hide();
+      window.Telegram.WebApp.MainButton.hide();
+    };
+  }, []);
 
   return (
     <div>
@@ -91,44 +130,26 @@ export const RegisterPatient: FC<{
             </h1>
           </header>
           <div className="contentWrapper">
-            <Box component="form" sx={{width: "80vw"}}>
-              <input
-                className="form-control"
+            <Box component="form" sx={{ width: "80vw" }}>
+              <StyledTextField
                 type="text"
-                placeholder="Name"
+                label="Name"
                 name="name"
                 onChange={handleInputChange}
               />
-              <input
-                className="form-control"
+              <StyledTextField
                 type="email"
-                placeholder="Email"
+                label="Email"
                 name="email"
                 onChange={handleInputChange}
               />
-              <input
-                className="form-control"
+              <StyledTextField
                 type="number"
-                placeholder="Age"
+                label="Age"
                 name="age"
                 onChange={handleInputChange}
               />
             </Box>
-
-            <BackButton
-              onClick={() => {
-                showPopup({
-                  title: "Back button click",
-                  message: "Back button click",
-                });
-              }}
-            />
-            <MainButton
-              text="REGISTER"
-              onClick={() => {
-                onSubmit(formData);
-              }}
-            />
           </div>
         </div>
       </ConfigProvider>
