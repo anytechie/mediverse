@@ -4,14 +4,18 @@ import {
   doc,
   getDoc,
   getDocs,
+  query,
+  where,
   updateDoc,
 } from "firebase/firestore";
-import { db } from "../../firebase"; // Adjust the path as per your project structure
-import "./PatientDashboard.scss";
-import { Button, ConfigProvider, theme } from "antd";
+import { db } from "../../firebase";
+import { Button, ConfigProvider, Tabs, theme } from "antd";
 import Search from "antd/es/input/Search";
 import { useNavigate } from "react-router-dom";
 import { useThemeParams } from "@vkruglikov/react-telegram-web-app";
+import "./PatientDashboard.scss";
+
+const { TabPane } = Tabs;
 
 export const PatientDashboard: FC<{
   onChangeTransition: DispatchWithoutAction;
@@ -22,6 +26,8 @@ export const PatientDashboard: FC<{
   const navigate = useNavigate();
   const userId = window.Telegram.WebApp.initDataUnsafe.user.id;
   const [userName, setUserName] = useState("");
+  const [upcomingAppointments, setUpcomingAppointments] = useState([]);
+  const [pastAppointments, setPastAppointments] = useState([]);
 
   useEffect(() => {
     const fetchUserName = async () => {
@@ -35,13 +41,24 @@ export const PatientDashboard: FC<{
     fetchUserName();
   }, [userId]);
 
-  const handleLogout = async () => {
-    const userRef = doc(db, "patients", userId.toString());
-    await updateDoc(userRef, {
-      loggedIn: false,
-    });
-    navigate("/");
-  };
+  useEffect(() => {
+    const fetchAppointments = async () => {
+      const q = query(
+        collection(db, "appointments"),
+        where("patientId", "==", userId.toString())
+      );
+      const querySnapshot = await getDocs(q);
+      const allAppointments = querySnapshot.docs.map((doc) => ({
+        ...doc.data(),
+        id: doc.id,
+      }));
+      console.log(allAppointments)
+      setUpcomingAppointments(allAppointments.filter((app: any) => !app.done));
+      setPastAppointments(allAppointments.filter((app: any) => app.done));
+    };
+
+    fetchAppointments();
+  }, [userId]);
 
   useEffect(() => {
     const fetchDoctors = async () => {
@@ -57,6 +74,13 @@ export const PatientDashboard: FC<{
     fetchDoctors();
   }, []);
 
+  const handleLogout = async () => {
+    const userRef = doc(db, "patients", userId.toString());
+    await updateDoc(userRef, {
+      loggedIn: false,
+    });
+    navigate("/");
+  };
 
   const filteredDoctors = doctors.filter(
     (doctor) =>
@@ -97,42 +121,93 @@ export const PatientDashboard: FC<{
             Logout
           </Button>
         </div>
-        <Search
-          placeholder="Search by name, speciality, or location"
-          allowClear
-          enterButton="Search"
-          // remove the search button
-          size="large"
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
 
-        {filteredDoctors.map((doctor) => (
-          <div key={doctor.id} className="profile">
-            <img
-              src={
-                doctor.profileImage ||
-                "https://images.pexels.com/photos/7242908/pexels-photo-7242908.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=150"
-              }
-              className="profile-img"
-              alt={`Dr. ${doctor.name}`}
+        <Tabs defaultActiveKey="2" centered>
+          <TabPane tab="Upcoming" key="1">
+            {upcomingAppointments.map((app) => (
+              <div key={app.id} className="profile">
+                <div className="text-center">
+                <img
+                  src={
+                    "https://images.pexels.com/photos/7242908/pexels-photo-7242908.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=150"
+                  }
+                  className="profile-img"
+                  alt={`Doctor ${app.doctorName}`}
+                />
+                  <h3 className="profile-name">Dr. {app.doctorName}</h3>
+                </div>
+                <div className="text-center">
+                  <p className="profile-role">Date: {app.date}</p>
+                  <p className="profile-role">Time: {app.slot}</p>
+                  <Button onClick={() => navigate(`/view_appointment/${app.id}`)}>
+                    View
+                  </Button>
+                </div>
+              </div>
+            ))}
+          </TabPane>
+
+          <TabPane tab="Explore" key="2">
+            <Search
+              placeholder="Search by name, speciality, or location"
+              allowClear
+              enterButton="Search"
+              size="large"
+              onChange={(e) => setSearchTerm(e.target.value)}
             />
-            <div>
-              <h3 className="profile-name">Dr.&nbsp; {doctor.name}</h3>
-              <p className="profile-role">{doctor.speciality}</p>
-              <p className="profile-role">
-                Experience: {doctor.experience} years (Overall){" "}
-              </p>
-              <p className="profile-role">{doctor.location}</p>
-              <p className="profile-role">
-                Consultation Fee: ${doctor.consultationFee}
-              </p>
-            </div>
-            <div className="text-center">
-              <Button onClick={() => handleBook(doctor.id)}>Book Now</Button>
-              <p>No booking fee</p>
-            </div>
-          </div>
-        ))}
+            {filteredDoctors.map((doctor) => (
+              <div key={doctor.id} className="profile">
+                <div className="text-center">
+                <img
+                  src={
+                    doctor.profileImage ||
+                    "https://images.pexels.com/photos/7242908/pexels-photo-7242908.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=150"
+                  }
+                  className="profile-img"
+                  alt={`Dr. ${doctor.name}`}
+                />
+                  <h3 className="profile-name">Dr.&nbsp; {doctor.name}</h3>
+                  <p className="profile-role">{doctor.speciality}</p>
+                  <p className="profile-role">
+                    Experience: {doctor.experience} years (Overall){" "}
+                  </p>
+                </div>
+                <div className="text-center">
+                  <p className="profile-role">{doctor.location}</p>
+                  <p className="profile-role">
+                    Consultation Fee: ${doctor.consultationFee}
+                  </p>
+                  <Button onClick={() => handleBook(doctor.id)}>Book Now</Button>
+                  <p>No booking fee</p>
+                </div>
+              </div>
+            ))}
+          </TabPane>
+
+          <TabPane tab="History" key="3">
+            {pastAppointments.map((app) => (
+              <div key={app.id} className="profile">
+                <div>
+                <img
+                  src={
+                    "https://images.pexels.com/photos/7242908/pexels-photo-7242908.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=150"
+                  }
+                  className="profile-img"
+                  alt={`Doctor ${app.doctorName}`}
+                />
+                  <h3 className="profile-name">{app.doctorName}</h3>
+                </div>
+                <div className="text-center">
+                  <p className="profile-role">Date: {app.date}</p>
+                  <p className="profile-role">Time: {app.slot}</p>
+                  <Button onClick={() => navigate(`/view_past_appointment/${app.id}`)}>
+                    View
+                  </Button>
+                </div>
+              </div>
+            ))}
+          </TabPane>
+        </Tabs>
       </div>
     </ConfigProvider>
   );

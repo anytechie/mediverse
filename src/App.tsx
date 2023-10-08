@@ -15,7 +15,7 @@ import "./App.css";
 import BookAppointment from "./components/BookAppointment/BookAppointment";
 import ResolveAppointment from "./components/ResolveAppointment/ResolveAppointment";
 import PastAppointmentDoctor from "./components/PastAppointmentDoctor/PastAppointmentDoctor";
-import PastAppointmentPatient from "./components/PastAppointmentPatient/PastAppointmentPatient";
+import ViewAppointment from "./components/ViewAppointmentPatient/PastAppointmentPatient";
 
 const App = () => {
   const location = useLocation();
@@ -31,7 +31,7 @@ const App = () => {
           <Route path="/book_appointment/:doctorId" element={<BookAppointment onChangeTransition={() => setSmoothButtonsTransition(true)} />} />
           <Route path="/resolve_appointment/:appointmentId" element={<ResolveAppointment onChangeTransition={() => setSmoothButtonsTransition(true)} />} />
           <Route path="/past_appointment_doctor/:appointmentId" element={<PastAppointmentDoctor onChangeTransition={() => setSmoothButtonsTransition(true)} />} />
-          <Route path="/past_appointment_patient/:appointmentId" element={<PastAppointmentPatient onChangeTransition={() => setSmoothButtonsTransition(true)} />} />
+          <Route path="/view_appointment/:appointmentId" element={<ViewAppointment onChangeTransition={() => setSmoothButtonsTransition(true)} />} />
         </Routes>
     </WebAppProvider>
   );

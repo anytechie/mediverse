@@ -152,7 +152,7 @@ export const BookAppointment: FC<{
       );
       window.Telegram.WebApp.MainButton.offClick(handleBookAppointment);
     };
-  }, [navigate, formData, doctorId, patientName, doctor.name]);
+  }, [navigate, formData, doctorId, patientName, doctor?.name]);
 
   useEffect(() => {
     window.Telegram.WebApp.MainButton.show();

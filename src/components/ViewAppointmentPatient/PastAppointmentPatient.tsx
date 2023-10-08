@@ -7,7 +7,7 @@ import { useThemeParams } from "@vkruglikov/react-telegram-web-app";
 import Patient from "../../assets/patient.png";
 import "./PastAppointmentPatient.scss";
 
-export const PastAppointmentPatient: FC<{
+export const ViewAppointment: FC<{
     onChangeTransition: DispatchWithoutAction;
   }> = () => {
   const { appointmentId } = useParams();
@@ -69,8 +69,9 @@ export const PastAppointmentPatient: FC<{
             <h2>Dr. {appointment.doctorName}</h2>
             <p>Date: {appointment.date}</p>
             <p>Time: {appointment.slot}</p>
-            <p>Diagnosis: {appointment.diagnosis}</p>
-            <p>Treatment: {appointment.treatment}</p>
+            <p>Description: {appointment.description}</p>
+            <p>Diagnosis: {appointment.diagnosis || "Yet to be diagnosed"}</p>
+            <p>Treatment: {appointment.treatment || "Yet to be treated"}</p>
           </>
         )}
       </div>
@@ -78,4 +79,4 @@ export const PastAppointmentPatient: FC<{
   );
 };
 
-export default PastAppointmentPatient;
+export default ViewAppointment;

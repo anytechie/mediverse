@@ -26,7 +26,7 @@ export const DoctorDashboard: FC<{
   const navigate = useNavigate();
   const doctorId = window.Telegram.WebApp.initDataUnsafe.user.id.toString();
   const [colorScheme, themeParams] = useThemeParams();
-  console.log(pastAppointments)
+
   useEffect(() => {
     const fetchAppointments = async () => {
       const q = query(
@@ -108,24 +108,26 @@ export const DoctorDashboard: FC<{
           </Button>
         </div>
         <Tabs defaultActiveKey="1" centered>
-        <TabPane tab="Upcoming Appointments" key="1">
+          <TabPane tab="Upcoming Appointments" key="1">
             {upcomingAppointments.map((app) => (
               <div key={app.id} className="profile">
-                <img
-                  src={
-                    // Placeholder image for now
-                    "https://images.pexels.com/photos/7242908/pexels-photo-7242908.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=150"
-                  }
-                  className="profile-img"
-                  alt={`Patient ${app.patientName}`}
-                />
-                <div>
+                <div className="text-center">
+                  <img
+                    src={
+                      // Placeholder image for now
+                      "https://images.pexels.com/photos/7242908/pexels-photo-7242908.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=150"
+                    }
+                    className="profile-img"
+                    alt={`Patient ${app.patientName}`}
+                  />
                   <h3 className="profile-name">{app.patientName}</h3>
-                  <p className="profile-role">Date: {app.date}</p>
-                  <p className="profile-role">Time: {app.slot}</p>
                 </div>
                 <div className="text-center">
-                  <Button onClick={() => navigate(`/resolve_appointment/${app.id}`)}>
+                  <p className="profile-role">Date: {app.date}</p>
+                  <p className="profile-role">Time: {app.slot}</p>
+                  <Button
+                    onClick={() => navigate(`/resolve_appointment/${app.id}`)}
+                  >
                     Consult
                   </Button>
                 </div>
@@ -149,7 +151,11 @@ export const DoctorDashboard: FC<{
                   <p className="profile-role">Time: {app.slot}</p>
                 </div>
                 <div className="text-center">
-                  <Button onClick={() => navigate(`/past_appointment_doctor/${app.id}`)}>
+                  <Button
+                    onClick={() =>
+                      navigate(`/past_appointment_doctor/${app.id}`)
+                    }
+                  >
                     View
                   </Button>
                 </div>
