@@ -139,6 +139,11 @@ export const BookAppointment: FC<{
         slot: formData.time,
         description: formData.description,
       });
+      window.Telegram.WebApp.showPopup({
+        title: "Success",
+        message: "Appointment booked successfully. You can see it in the upcoming appointments section. You will be notified well in advance before the appointment.",
+        buttons: [{ type: "ok" }],
+      })
       navigate("/patient_dashboard");
     };
 

@@ -56,6 +56,7 @@ export const ResolveAppointment: FC<{
       window.Telegram.WebApp.showPopup({
         title: "Appointment Resolved",
         message: "Appointment has been resolved successfully",
+        buttons: [{ type: "ok" }],
       });
       navigate("/doctor_dashboard");
     };
