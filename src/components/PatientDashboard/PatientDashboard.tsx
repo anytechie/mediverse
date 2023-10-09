@@ -14,7 +14,6 @@ import Search from "antd/es/input/Search";
 import { useNavigate } from "react-router-dom";
 import { useThemeParams } from "@vkruglikov/react-telegram-web-app";
 import "./PatientDashboard.scss";
-import Loader from "../Loader/Loader";
 
 const { TabPane } = Tabs;
 
