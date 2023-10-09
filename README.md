@@ -1,6 +1,6 @@
 <p align="center">
   <br>
-  <img width="240" src="./src/assets/tapps.png" alt="logo of telegram web apps">
+  <img width="240" src="./public/logo.png" alt="logo of telegram web apps">
   <br>
   <br>
 </p>

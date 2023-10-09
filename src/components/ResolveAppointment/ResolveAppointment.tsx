@@ -17,7 +17,7 @@ export const ResolveAppointment: FC<{
   const [treatment, setTreatment] = useState("");
   const navigate = useNavigate();
   const [colorScheme, themeParams] = useThemeParams();
-  console.log(appointmentId, location);
+
   useEffect(() => {
     const fetchAppointment = async () => {
       const appointmentRef = doc(db, "appointments", appointmentId);

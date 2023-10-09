@@ -13,6 +13,8 @@ import { Button, ConfigProvider, Tabs, theme } from "antd";
 import Search from "antd/es/input/Search";
 import { useNavigate } from "react-router-dom";
 import { useThemeParams } from "@vkruglikov/react-telegram-web-app";
+import Doctor1 from "../../assets/doctor_1.jpg";
+import Doctor2 from "../../assets/doctor_2.jpg";
 import "./PatientDashboard.scss";
 
 const { TabPane } = Tabs;
@@ -52,7 +54,7 @@ export const PatientDashboard: FC<{
         ...doc.data(),
         id: doc.id,
       }));
-      console.log(allAppointments)
+      console.log(allAppointments);
       setUpcomingAppointments(allAppointments.filter((app: any) => !app.done));
       setPastAppointments(allAppointments.filter((app: any) => app.done));
     };
@@ -137,19 +139,19 @@ export const PatientDashboard: FC<{
             {upcomingAppointments.map((app) => (
               <div key={app.id} className="profile">
                 <div className="text-center">
-                <img
-                  src={
-                    "https://images.pexels.com/photos/7242908/pexels-photo-7242908.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=150"
-                  }
-                  className="profile-img"
-                  alt={`Doctor ${app.doctorName}`}
-                />
+                  <img
+                    src={Math.random() > 0.5 ? Doctor1 : Doctor2}
+                    className="profile-img"
+                    alt={`Doctor ${app.doctorName}`}
+                  />
                   <h3 className="profile-name">Dr. {app.doctorName}</h3>
                 </div>
                 <div className="text-center">
                   <p className="profile-role">Date: {app.date}</p>
                   <p className="profile-role">Time: {app.slot}</p>
-                  <Button onClick={() => navigate(`/view_appointment/${app.id}`)}>
+                  <Button
+                    onClick={() => navigate(`/view_appointment/${app.id}`)}
+                  >
                     View
                   </Button>
                 </div>
@@ -168,14 +170,11 @@ export const PatientDashboard: FC<{
             {filteredDoctors.map((doctor) => (
               <div key={doctor.id} className="profile">
                 <div className="text-center">
-                <img
-                  src={
-                    doctor.profileImage ||
-                    "https://images.pexels.com/photos/7242908/pexels-photo-7242908.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=150"
-                  }
-                  className="profile-img"
-                  alt={`Dr. ${doctor.name}`}
-                />
+                  <img
+                    src={Math.random() > 0.5 ? Doctor1 : Doctor2}
+                    className="profile-img"
+                    alt={`Dr. ${doctor.name}`}
+                  />
                   <h3 className="profile-name">Dr.&nbsp; {doctor.name}</h3>
                   <p className="profile-role">{doctor.speciality}</p>
                   <p className="profile-role">
@@ -187,7 +186,9 @@ export const PatientDashboard: FC<{
                   <p className="profile-role">
                     Consultation Fee: ${doctor.consultationFee}
                   </p>
-                  <Button onClick={() => handleBook(doctor.id)}>Book Now</Button>
+                  <Button onClick={() => handleBook(doctor.id)}>
+                    Book Now
+                  </Button>
                   <p>No booking fee</p>
                 </div>
               </div>
@@ -197,20 +198,20 @@ export const PatientDashboard: FC<{
           <TabPane tab="History" key="3">
             {pastAppointments.map((app) => (
               <div key={app.id} className="profile">
-                <div className="text-center+">
-                <img
-                  src={
-                    "https://images.pexels.com/photos/7242908/pexels-photo-7242908.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=150"
-                  }
-                  className="profile-img"
-                  alt={`Doctor ${app.doctorName}`}
-                />
+                <div className="text-center">
+                  <img
+                    src={Math.random() > 0.5 ? Doctor1 : Doctor2}
+                    className="profile-img"
+                    alt={`Doctor ${app.doctorName}`}
+                  />
                   <h3 className="profile-name">{app.doctorName}</h3>
                 </div>
                 <div className="text-center">
                   <p className="profile-role">Date: {app.date}</p>
                   <p className="profile-role">Time: {app.slot}</p>
-                  <Button onClick={() => navigate(`/view_past_appointment/${app.id}`)}>
+                  <Button
+                    onClick={() => navigate(`/view_past_appointment/${app.id}`)}
+                  >
                     View
                   </Button>
                 </div>

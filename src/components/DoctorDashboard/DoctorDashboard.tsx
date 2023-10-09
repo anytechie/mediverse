@@ -14,6 +14,8 @@ import { useNavigate } from "react-router-dom";
 import { ConfigProvider, theme } from "antd";
 import { useThemeParams } from "@vkruglikov/react-telegram-web-app";
 import "./DoctorDashboard.scss";
+import Doctor1 from "../../assets/doctor_1.jpg";
+import Doctor2 from "../../assets/doctor_2.jpg";
 
 const { TabPane } = Tabs;
 
@@ -39,8 +41,10 @@ export const DoctorDashboard: FC<{
           ...doc.data(),
           id: doc.id,
         }));
-  
-        setUpcomingAppointments(allAppointments.filter((app: any) => !app.done));
+
+        setUpcomingAppointments(
+          allAppointments.filter((app: any) => !app.done)
+        );
         setPastAppointments(allAppointments.filter((app: any) => app.done));
       } catch (error) {
         console.log(error);
@@ -128,10 +132,7 @@ export const DoctorDashboard: FC<{
               <div key={app.id} className="profile">
                 <div className="text-center">
                   <img
-                    src={
-                      // Placeholder image for now
-                      "https://images.pexels.com/photos/7242908/pexels-photo-7242908.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=150"
-                    }
+                    src={Math.random() > 0.5 ? Doctor1 : Doctor2}
                     className="profile-img"
                     alt={`Patient ${app.patientName}`}
                   />
@@ -154,10 +155,7 @@ export const DoctorDashboard: FC<{
               <div key={app.id} className="profile">
                 <div className="text-center">
                   <img
-                    src={
-                      // Placeholder image for now
-                      "https://images.pexels.com/photos/7242908/pexels-photo-7242908.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=150"
-                    }
+                    src={Math.random() > 0.5 ? Doctor1 : Doctor2}
                     className="profile-img"
                     alt={`Patient ${app.patientName}`}
                   />

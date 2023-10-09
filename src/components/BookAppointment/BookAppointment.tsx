@@ -14,6 +14,8 @@ import { ConfigProvider, theme } from "antd";
 import { useThemeParams } from "@vkruglikov/react-telegram-web-app";
 import { Box, MenuItem } from "@mui/material";
 import "./BookAppointment.scss";
+import Doctor1 from "../../assets/doctor_1.jpg";
+import Doctor2 from "../../assets/doctor_2.jpg";
 import StyledTextField from "../StyledTextField/StyledTextField";
 
 export const BookAppointment: FC<{
@@ -244,80 +246,77 @@ You can pay the consultation fee by clicking on the link below.
           : undefined
       }
     >
-      doctor && (
-      <div className="book_appointment">
-        <div className="profile">
-          <img
-            src={
-              doctor.profileImage ||
-              "https://images.pexels.com/photos/7242908/pexels-photo-7242908.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=150"
-            }
-            alt={`Dr. ${doctor.name}`}
-            className="profile-img"
-          />
-          <h3>{doctor.name}</h3>
-          <p>{doctor.speciality}</p>
-          <p>{doctor.experience} years of experience</p>
-        </div>
-        <Box component="form" style={{ paddingInline: 20 }}>
-          <StyledTextField
-            label="Date"
-            type="date"
-            name="date"
-            // minDate
-            inputProps={{
-              min: minDate,
-            }}
-            value={formData.date}
-            onChange={handleInputChange}
-            fullWidth
-            InputLabelProps={{
-              shrink: true,
-            }}
-          />
-          {formData.date &&
-            (availableSlots.length > 0 ? (
-              <StyledTextField
-                select
-                label="Select Slot"
-                name="time"
-                value={formData.time}
-                onChange={handleInputChange}
-                fullWidth
-                margin="normal"
-              >
-                {availableSlots.map((slot, index) => (
-                  <MenuItem key={index} value={slot}>
-                    {slot}
-                  </MenuItem>
-                ))}
-              </StyledTextField>
-            ) : (
-              <h3
-                style={{
-                  color: "#f44336",
-                  padding: "5px",
-                }}
-              >
-                No slots available for this day. <br />
-                <br />
-                Please select another date.
-              </h3>
-            ))}
+      {doctor ? (
+        <div className="book_appointment">
+          <div className="profile">
+            <img
+              src={doctor.profileImage || (Math.random() > 0.5 ? Doctor1 : Doctor2)}
+              alt={`Dr. ${doctor.name}`}
+              className="profile-img"
+            />
+            <h3>{doctor.name}</h3>
+            <p>{doctor.speciality}</p>
+            <p>{doctor.experience} years of experience</p>
+          </div>
+          <Box component="form" style={{ paddingInline: 20 }}>
+            <StyledTextField
+              label="Date"
+              type="date"
+              name="date"
+              // minDate
+              inputProps={{
+                min: minDate,
+              }}
+              value={formData.date}
+              onChange={handleInputChange}
+              fullWidth
+              InputLabelProps={{
+                shrink: true,
+              }}
+            />
+            {formData.date &&
+              (availableSlots.length > 0 ? (
+                <StyledTextField
+                  select
+                  label="Select Slot"
+                  name="time"
+                  value={formData.time}
+                  onChange={handleInputChange}
+                  fullWidth
+                  margin="normal"
+                >
+                  {availableSlots.map((slot, index) => (
+                    <MenuItem key={index} value={slot}>
+                      {slot}
+                    </MenuItem>
+                  ))}
+                </StyledTextField>
+              ) : (
+                <h3
+                  style={{
+                    color: "#f44336",
+                    padding: "5px",
+                  }}
+                >
+                  No slots available for this day. <br />
+                  <br />
+                  Please select another date.
+                </h3>
+              ))}
 
-          <StyledTextField
-            label="Problem Description"
-            name="description"
-            value={formData.description}
-            onChange={handleInputChange}
-            multiline
-            rows={4}
-            fullWidth
-            margin="normal"
-          />
-        </Box>
-      </div>
-      )
+            <StyledTextField
+              label="Problem Description"
+              name="description"
+              value={formData.description}
+              onChange={handleInputChange}
+              multiline
+              rows={4}
+              fullWidth
+              margin="normal"
+            />
+          </Box>
+        </div>
+      ) : null}
     </ConfigProvider>
   );
 };
