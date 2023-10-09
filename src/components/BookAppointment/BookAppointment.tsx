@@ -15,7 +15,6 @@ import { useThemeParams } from "@vkruglikov/react-telegram-web-app";
 import { Box, MenuItem } from "@mui/material";
 import "./BookAppointment.scss";
 import StyledTextField from "../StyledTextField/StyledTextField";
-import Loader from "../Loader/Loader";
 
 export const BookAppointment: FC<{
   onChangeTransition: DispatchWithoutAction;
@@ -32,7 +31,6 @@ export const BookAppointment: FC<{
     description: "",
   });
 
-  const [loading, setLoading] = useState(false);
   const [bookedSlots, setBookedSlots] = useState([]);
 
   const handleInputChange = (event) => {
@@ -54,7 +52,8 @@ export const BookAppointment: FC<{
 
   useEffect(() => {
     const fetchPatientName = async () => {
-      const patientId = window.Telegram.WebApp.initDataUnsafe.user.id.toString();
+      const patientId =
+        window.Telegram.WebApp.initDataUnsafe.user.id.toString();
       const patientRef = doc(db, "patients", patientId);
       const docSnap = await getDoc(patientRef);
       if (docSnap.exists()) {
@@ -72,16 +71,22 @@ export const BookAppointment: FC<{
 
   useEffect(() => {
     const fetchBookedSlots = async () => {
-      if (formData.date && doctorId) {
-        const q = query(
-          collection(db, "appointments"),
-          where("doctorId", "==", doctorId),
-          where("date", "==", formData.date)
-        );
-        const querySnapshot = await getDocs(q);
-        const bookedTimes = querySnapshot.docs.map((doc) => doc.data().slot);
-        setBookedSlots(bookedTimes);
-        setLoading(false);
+      try {
+        window.Telegram.WebApp.MainButton.showProgress();
+        if (formData.date && doctorId) {
+          const q = query(
+            collection(db, "appointments"),
+            where("doctorId", "==", doctorId),
+            where("date", "==", formData.date)
+          );
+          const querySnapshot = await getDocs(q);
+          const bookedTimes = querySnapshot.docs.map((doc) => doc.data().slot);
+          setBookedSlots(bookedTimes);
+        }
+        window.Telegram.WebApp.MainButton.hideProgress();
+      } catch (error) {
+        console.log(error);
+        window.Telegram.WebApp.showAlert("Error fetching appointments");
       }
     };
 
@@ -129,32 +134,68 @@ export const BookAppointment: FC<{
     };
 
     const handleBookAppointment = async () => {
-      const patientId = window.Telegram.WebApp.initDataUnsafe.user.id.toString();
-      await addDoc(collection(db, "appointments"), {
-        doctorId,
-        patientId,
-        patientName,
-        doctorName: doctor.name,
-        date: formData.date,
-        slot: formData.time,
-        description: formData.description,
-      });
+      if (!formData.date || !formData.time || !formData.description) {
+        window.Telegram.WebApp.showPopup({
+          title: "Error",
+          message: "Please fill all the fields",
+          buttons: [{ type: "ok" }],
+        });
+        return;
+      }
 
-      await addDoc(collection(db, "messages"), {
-        userId: doctorId,
-        content: `You have a new appointment from *${patientName}* on *${formData.date}* at *${formData.time}*`,
-      });
-      await addDoc(collection(db, "messages"), {
-        userId: patientId,
-        content: `Your appointment with *Dr. ${doctor.name}* on *${formData.date}* at *${formData.time}* has been booked successfully`,
-      });
+      try {
+        window.Telegram.WebApp.MainButton.showProgress();
+        const patientId =
+          window.Telegram.WebApp.initDataUnsafe.user.id.toString();
+        await addDoc(collection(db, "appointments"), {
+          doctorId,
+          patientId,
+          patientName,
+          doctorName: doctor.name,
+          date: formData.date,
+          slot: formData.time,
+          description: formData.description,
+        });
 
-      window.Telegram.WebApp.showPopup({
-        title: "Success",
-        message: "Appointment booked successfully. You can see it in the upcoming appointments section.",
-        buttons: [{ type: "ok" }],
-      })
-      navigate("/patient_dashboard");
+        await addDoc(collection(db, "messages"), {
+          userId: doctorId,
+          content: `
+*New Appointment*
+*Patient Name*: ${patientName}
+*Date*: ${formData.date}
+*Time*: ${formData.time}
+*Description*: ${formData.description}
+You can contact the patient by clicking [here](tg://user?id=${patientId}).
+          `,
+        });
+        await addDoc(collection(db, "messages"), {
+          userId: patientId,
+          content: `
+*Appointment Confirmed*
+*Doctor Name*: ${doctor.name}
+*Date*: ${formData.date}
+*Time*: ${formData.time}
+*Description*: ${formData.description}        
+*Consultation Fee*: $${doctor.consultationFee}
+Please contact the doctor at the scheduled time by clicking [here](tg://user?id=${doctorId}).
+You can pay the consultation fee by clicking on the link below.
+          `,
+          paymentLink: `https://pay.telegram.org/${doctor.consultationFee}`,
+        });
+
+        window.Telegram.WebApp.MainButton.hideProgress();
+        window.Telegram.WebApp.showPopup({
+          title: "Success",
+          message:
+            "Appointment booked successfully. You can see it in the upcoming appointments section.",
+          buttons: [{ type: "ok" }],
+        });
+        navigate("/patient_dashboard");
+      } catch (error) {
+        console.log(error);
+        window.Telegram.WebApp.showAlert("Error booking appointment");
+        window.Telegram.WebApp.MainButton.hideProgress();
+      }
     };
 
     window.Telegram.WebApp.MainButton.setText("BOOK APPOINTMENT");
@@ -167,7 +208,14 @@ export const BookAppointment: FC<{
       );
       window.Telegram.WebApp.MainButton.offClick(handleBookAppointment);
     };
-  }, [navigate, formData, doctorId, patientName, doctor?.name]);
+  }, [
+    navigate,
+    formData,
+    doctorId,
+    patientName,
+    doctor?.name,
+    doctor?.consultationFee,
+  ]);
 
   useEffect(() => {
     window.Telegram.WebApp.MainButton.show();
@@ -196,71 +244,80 @@ export const BookAppointment: FC<{
           : undefined
       }
     >
-      {loading ? (
-        <Loader />
-      ) : (
-        doctor && (
-          <div className="book_appointment">
-            <div className="profile">
-              <img
-                src={
-                  doctor.profileImage ||
-                  "https://images.pexels.com/photos/7242908/pexels-photo-7242908.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=150"
-                }
-                alt={`Dr. ${doctor.name}`}
-                className="profile-img"
-              />
-              <h3>{doctor.name}</h3>
-              <p>{doctor.speciality}</p>
-              <p>{doctor.experience} years of experience</p>
-            </div>
-            <Box component="form" style={{ paddingInline: 20 }}>
+      doctor && (
+      <div className="book_appointment">
+        <div className="profile">
+          <img
+            src={
+              doctor.profileImage ||
+              "https://images.pexels.com/photos/7242908/pexels-photo-7242908.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=150"
+            }
+            alt={`Dr. ${doctor.name}`}
+            className="profile-img"
+          />
+          <h3>{doctor.name}</h3>
+          <p>{doctor.speciality}</p>
+          <p>{doctor.experience} years of experience</p>
+        </div>
+        <Box component="form" style={{ paddingInline: 20 }}>
+          <StyledTextField
+            label="Date"
+            type="date"
+            name="date"
+            // minDate
+            inputProps={{
+              min: minDate,
+            }}
+            value={formData.date}
+            onChange={handleInputChange}
+            fullWidth
+            InputLabelProps={{
+              shrink: true,
+            }}
+          />
+          {formData.date &&
+            (availableSlots.length > 0 ? (
               <StyledTextField
-                label="Date"
-                type="date"
-                name="date"
-                // minDate
-                inputProps={{
-                  min: minDate,
-                }}
-                value={formData.date}
+                select
+                label="Select Slot"
+                name="time"
+                value={formData.time}
                 onChange={handleInputChange}
-                fullWidth
-                InputLabelProps={{
-                  shrink: true,
-                }}
-              />
-              {formData.date && (
-                <StyledTextField
-                  select
-                  label="Select Slot"
-                  name="time"
-                  value={formData.time}
-                  onChange={handleInputChange}
-                  fullWidth
-                  margin="normal"
-                >
-                  {availableSlots.map((slot, index) => (
-                    <MenuItem key={index} value={slot}>
-                      {slot}
-                    </MenuItem>
-                  ))}
-                </StyledTextField>
-              )}
-              <StyledTextField
-                label="Problem Description"
-                name="description"
-                value={formData.description}
-                onChange={handleInputChange}
-                multiline
-                rows={4}
                 fullWidth
                 margin="normal"
-              />
-            </Box>
-          </div>
-        )
-      )}
+              >
+                {availableSlots.map((slot, index) => (
+                  <MenuItem key={index} value={slot}>
+                    {slot}
+                  </MenuItem>
+                ))}
+              </StyledTextField>
+            ) : (
+              <h3
+                style={{
+                  color: "#f44336",
+                  padding: "5px",
+                }}
+              >
+                No slots available for this day. <br />
+                <br />
+                Please select another date.
+              </h3>
+            ))}
+
+          <StyledTextField
+            label="Problem Description"
+            name="description"
+            value={formData.description}
+            onChange={handleInputChange}
+            multiline
+            rows={4}
+            fullWidth
+            margin="normal"
+          />
+        </Box>
+      </div>
+      )
     </ConfigProvider>
   );
 };

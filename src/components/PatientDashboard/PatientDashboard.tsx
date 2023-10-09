@@ -14,6 +14,7 @@ import Search from "antd/es/input/Search";
 import { useNavigate } from "react-router-dom";
 import { useThemeParams } from "@vkruglikov/react-telegram-web-app";
 import "./PatientDashboard.scss";
+import Loader from "../Loader/Loader";
 
 const { TabPane } = Tabs;
 
@@ -62,13 +63,23 @@ export const PatientDashboard: FC<{
 
   useEffect(() => {
     const fetchDoctors = async () => {
-      const doctorsCollection = collection(db, "doctors");
-      const doctorsSnapshot = await getDocs(doctorsCollection);
-      const doctorsList = doctorsSnapshot.docs.map((doc) => ({
-        ...doc.data(),
-        id: doc.id,
-      }));
-      setDoctors(doctorsList);
+      try {
+        window.Telegram.WebApp.MainButton.show();
+        window.Telegram.WebApp.MainButton.setText("LOADING...");
+        window.Telegram.WebApp.MainButton.showProgress();
+        const doctorsCollection = collection(db, "doctors");
+        const doctorsSnapshot = await getDocs(doctorsCollection);
+        const doctorsList = doctorsSnapshot.docs.map((doc) => ({
+          ...doc.data(),
+          id: doc.id,
+        }));
+        setDoctors(doctorsList);
+        window.Telegram.WebApp.MainButton.hideProgress();
+        window.Telegram.WebApp.MainButton.hide();
+      } catch (e) {
+        console.log(e);
+        window.Telegram.WebApp.showAlert("Error fetching doctors");
+      }
     };
 
     fetchDoctors();
@@ -187,7 +198,7 @@ export const PatientDashboard: FC<{
           <TabPane tab="History" key="3">
             {pastAppointments.map((app) => (
               <div key={app.id} className="profile">
-                <div>
+                <div className="text-center+">
                 <img
                   src={
                     "https://images.pexels.com/photos/7242908/pexels-photo-7242908.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=150"

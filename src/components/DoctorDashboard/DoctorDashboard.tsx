@@ -29,18 +29,23 @@ export const DoctorDashboard: FC<{
 
   useEffect(() => {
     const fetchAppointments = async () => {
-      const q = query(
-        collection(db, "appointments"),
-        where("doctorId", "==", doctorId)
-      );
-      const querySnapshot = await getDocs(q);
-      const allAppointments = querySnapshot.docs.map((doc) => ({
-        ...doc.data(),
-        id: doc.id,
-      }));
-
-      setUpcomingAppointments(allAppointments.filter((app: any) => !app.done));
-      setPastAppointments(allAppointments.filter((app: any) => app.done));
+      try {
+        const q = query(
+          collection(db, "appointments"),
+          where("doctorId", "==", doctorId)
+        );
+        const querySnapshot = await getDocs(q);
+        const allAppointments = querySnapshot.docs.map((doc) => ({
+          ...doc.data(),
+          id: doc.id,
+        }));
+  
+        setUpcomingAppointments(allAppointments.filter((app: any) => !app.done));
+        setPastAppointments(allAppointments.filter((app: any) => app.done));
+      } catch (error) {
+        console.log(error);
+        window.Telegram.WebApp.showAlert("Error fetching appointments");
+      }
     };
 
     fetchAppointments();
@@ -48,10 +53,15 @@ export const DoctorDashboard: FC<{
 
   useEffect(() => {
     const fetchDoctorName = async () => {
-      const doctorRef = doc(db, "doctors", doctorId);
-      const docSnap = await getDoc(doctorRef);
-      if (docSnap.exists()) {
-        setDoctorName(docSnap.data().name);
+      try {
+        const doctorRef = doc(db, "doctors", doctorId);
+        const docSnap = await getDoc(doctorRef);
+        if (docSnap.exists()) {
+          setDoctorName(docSnap.data().name);
+        }
+      } catch (error) {
+        console.log(error);
+        window.Telegram.WebApp.showAlert("Error fetching doctor name");
       }
     };
 
@@ -59,11 +69,16 @@ export const DoctorDashboard: FC<{
   }, [doctorId]);
 
   const handleLogout = async () => {
-    const doctorRef = doc(db, "doctors", doctorId);
-    await updateDoc(doctorRef, {
-      loggedIn: false,
-    });
-    navigate("/");
+    try {
+      const doctorRef = doc(db, "doctors", doctorId);
+      await updateDoc(doctorRef, {
+        loggedIn: false,
+      });
+      navigate("/");
+    } catch (error) {
+      console.log(error);
+      window.Telegram.WebApp.showAlert("Error logging out");
+    }
   };
 
   useEffect(() => {
@@ -138,14 +153,14 @@ export const DoctorDashboard: FC<{
             {pastAppointments.map((app) => (
               <div key={app.id} className="profile">
                 <div className="text-center">
-                <img
-                  src={
-                    // Placeholder image for now
-                    "https://images.pexels.com/photos/7242908/pexels-photo-7242908.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=150"
-                  }
-                  className="profile-img"
-                  alt={`Patient ${app.patientName}`}
-                />
+                  <img
+                    src={
+                      // Placeholder image for now
+                      "https://images.pexels.com/photos/7242908/pexels-photo-7242908.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=150"
+                    }
+                    className="profile-img"
+                    alt={`Patient ${app.patientName}`}
+                  />
                   <h3 className="profile-name">{app.patientName}</h3>
                 </div>
                 <div className="text-center">
