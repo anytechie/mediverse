@@ -8,8 +8,10 @@ import WebApp from '@twa-dev/sdk'
 
 WebApp.ready();
 
+console.log('Hello from React!')
+
 ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
+  <React.StrictMode>|
     <BrowserRouter>
       <App />
     </BrowserRouter>

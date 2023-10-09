@@ -19,10 +19,11 @@ import ViewAppointment from "./components/ViewAppointmentPatient/PastAppointment
 
 const App = () => {
   const location = useLocation();
+  console.log(location.pathname)
   const [smoothButtonsTransition, setSmoothButtonsTransition] = useState(false);
   return (
     <WebAppProvider options={{ smoothButtonsTransition }}>
-        <Routes location={location} key={location.pathname}>1
+        <Routes>
           <Route path="/" element={<LandingPage onChangeTransition={() => setSmoothButtonsTransition(true)} />} />
           <Route path="/register_doctor" element={<RegisterDoctor onChangeTransition={() => setSmoothButtonsTransition(true)} />} />
           <Route path="/register_patient" element={<RegisterPatient onChangeTransition={() => setSmoothButtonsTransition(true)} />} />
