@@ -38,14 +38,10 @@
     - After consultations, patients can rate and review doctors.
     - Helps in maintaining the quality of the platform.
 
-7. **Health Tips & Articles**:
-    - Doctors can share health tips, articles, or general advice for patients.
-    - A feed where patients can browse through these tips.
-
-8. **Privacy & Security**:
+7. **Privacy & Security**:
     - Doctors and patients can only see relevant information.
 
-9. **Payment**:
+8. **Payment**:
     - Patients can easily pay for consultations or appointments using Telegram's built-in payment system.
 
 This idea can be a game-changer. It can bridge the gap and provide a platform for easy consultations.
