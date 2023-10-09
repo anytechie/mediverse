@@ -14,13 +14,12 @@
 
 1. **Doctor Registration**:
     - Doctors can register, providing their specialization, credentials, years of experience, and availability.
-    - Doctors can set their consultation fees.
-    - Doctors can set their availability for appointments.
+    - Doctors can set their consultation fees and set their availability.
+    - Doctors can view their past appointments and consultations.
 
 2. **Patient Profile**:
     - Patients can create profiles with basic information
-    - Patients can book appointments with doctors.
-    - Patients can view their past appointments and consultations.
+    - Patients can book appointments with doctors, can view their past appointments and consultations.
 
 3. **Search & Filter**:
     - Patients can search for doctors based on specialization, location, ratings, etc.
