@@ -102,7 +102,7 @@ export const DoctorDashboard: FC<{
     >
       <div className="doctor_dashboard">
         <div className="header">
-          <h1 className="welcome_message">{doctorName}'s Dashboard</h1>
+          <h1 className="welcome_message">Dr. {doctorName}'s Dashboard</h1>
           <Button className="logout-button" onClick={handleLogout}>
             Logout
           </Button>

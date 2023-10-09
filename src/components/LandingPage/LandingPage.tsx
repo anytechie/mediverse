@@ -1,12 +1,13 @@
 import { DispatchWithoutAction, FC, useEffect, useState } from "react";
 import { useThemeParams } from "@vkruglikov/react-telegram-web-app";
-import { ConfigProvider, theme, Button } from "antd";
+import { ConfigProvider, theme } from "antd";
 import DoctorPatient from "../../assets/doctor_patient.json";
 import Lottie from "react-lottie-player";
 import { useNavigate } from "react-router-dom";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
-import { db } from "../../firebase"; // Adjust the path as per your project structure
+import { db } from "../../firebase";
 import Loader from "../Loader/Loader";
+import "./LandingPage.scss";
 
 export const LandingPage: FC<{
   onChangeTransition: DispatchWithoutAction;
@@ -37,18 +38,18 @@ export const LandingPage: FC<{
       setLoading(false);
     }
     const checkUserExistsAndLoggedInDoctor = async () => {
-      const docRef = doc(db, "patients", userId.toString());
+      const docRef = doc(db, "doctors", userId.toString());
       const docSnap = await getDoc(docRef);
       if (docSnap.exists()) {
         // check user.loggedIn
         const data = docSnap.data();
         if (data?.loggedIn) {
           // user is logged in
-          navigate("/patient_dashboard");
+          navigate("/doctor_dashboard");
         }
       } else {
         // user does not exist
-        window.Telegram.WebApp.MainButton.setText("REGISTER AS A PATIENT");
+        window.Telegram.WebApp.MainButton.setText("REGISTER AS A DOCTOR");
       }
       setLoading(false);
     }
@@ -67,6 +68,11 @@ export const LandingPage: FC<{
     window.Telegram.WebApp.MainButton.showProgress();
     const exists = await checkUserExists("doctors");
     if (exists) {
+      window.Telegram.WebApp.MainButton.setText("ACCOUNT EXISTS, Logging in...");
+      const userRef = doc(db, "doctors", userId.toString());
+      await updateDoc(userRef, {
+        loggedIn: true,
+      });
       navigate("/doctor_dashboard");
     } else {
       // Navigate to doctor registration page
@@ -105,7 +111,7 @@ export const LandingPage: FC<{
   }
 
   return (
-    <div>
+    <div className="landing_page">
       <ConfigProvider
         theme={
           themeParams.text_color
@@ -123,7 +129,7 @@ export const LandingPage: FC<{
             : undefined
         }
       >
-        <div className="d-flex flex-column justify-content-center align-items-center text-center h-80">
+        <div className="d-flex flex-column justify-content-center align-items-center text-center">
           <header className="App-header">
             <Lottie
               animationData={DoctorPatient}
@@ -148,13 +154,13 @@ export const LandingPage: FC<{
               Bridging the Universe Between Patients and Doctors.
             </h2>
           </header>
-          <div className="contentWrapper d-flex flex-column justify-content-center align-items-center">
-              <Button type="primary" block onClick={handleDoctorRegister}>
+          <div className="contentWrapper d-flex justify-content-center align-items-center flex-column gap-10">
+              <div className="circularBigButton -blue"  onClick={handleDoctorRegister}>
                 Register as a Doctor
-              </Button>
-              <Button type="primary" onClick={handlePatientRegister}>
+              </div>
+              <div className="circularBigButton -salmon"  onClick={handlePatientRegister}>
                 Register as a Patient
-              </Button>
+              </div>
           </div>
         </div>
       </ConfigProvider>

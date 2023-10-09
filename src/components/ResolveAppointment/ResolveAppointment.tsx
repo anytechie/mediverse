@@ -1,5 +1,5 @@
 import { useState, useEffect, FC, DispatchWithoutAction } from "react";
-import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { addDoc, collection, doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "../../firebase";
 import { useNavigate, useParams } from "react-router-dom";
 import { ConfigProvider, theme } from "antd";
@@ -53,6 +53,19 @@ export const ResolveAppointment: FC<{
         treatment,
         done: true,
       });
+
+      const doctorId = appointment.doctorId;
+      const patientId = appointment.patientId;
+      await addDoc(collection(db, "messages"), {
+        userId: doctorId,
+        content: `The appointment for *${appointment.patientName}* has been resolved successfully`,
+      });
+
+      await addDoc(collection(db, "messages"), {
+        userId: patientId,
+        content: `Your appointment with *Dr. ${appointment.doctorName}* has been resolved successfully`,
+      });
+
       window.Telegram.WebApp.showPopup({
         title: "Appointment Resolved",
         message: "Appointment has been resolved successfully",
@@ -61,13 +74,18 @@ export const ResolveAppointment: FC<{
       navigate("/doctor_dashboard");
     };
     window.Telegram.WebApp.MainButton.setText("RESOLVE");
-    window.Telegram.WebApp.MainButton.show();
     window.Telegram.WebApp.MainButton.onClick(handleResolve);
     return () => {
-      window.Telegram.WebApp.MainButton.onClick(handleResolve);
-      window.Telegram.WebApp.MainButton.hide();
+      window.Telegram.WebApp.MainButton.offClick(handleResolve);
     };
-  }, [appointmentId, diagnosis, navigate, treatment]);
+  }, [appointment?.doctorId, appointment?.doctorName, appointment?.patientId, appointment?.patientName, appointmentId, diagnosis, navigate, treatment]);
+
+  useEffect(() => {
+    window.Telegram.WebApp.MainButton.show();
+    return () => {
+      window.Telegram.WebApp.MainButton.hide();
+    }
+  }, []);
 
   return (
     <ConfigProvider

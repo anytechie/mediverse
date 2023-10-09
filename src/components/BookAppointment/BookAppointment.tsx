@@ -139,9 +139,19 @@ export const BookAppointment: FC<{
         slot: formData.time,
         description: formData.description,
       });
+
+      await addDoc(collection(db, "messages"), {
+        userId: doctorId,
+        content: `You have a new appointment from *${patientName}* on *${formData.date}* at *${formData.time}*`,
+      });
+      await addDoc(collection(db, "messages"), {
+        userId: patientId,
+        content: `Your appointment with *Dr. ${doctor.name}* on *${formData.date}* at *${formData.time}* has been booked successfully`,
+      });
+
       window.Telegram.WebApp.showPopup({
         title: "Success",
-        message: "Appointment booked successfully. You can see it in the upcoming appointments section. You will be notified well in advance before the appointment.",
+        message: "Appointment booked successfully. You can see it in the upcoming appointments section.",
         buttons: [{ type: "ok" }],
       })
       navigate("/patient_dashboard");

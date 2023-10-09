@@ -17,7 +17,6 @@
 body {
   font-family: var(--default-font) !important;
   font-size: 13px;
-  line-height: 16px;
   font-weight: 400;
   background-color: var(--tg-theme-bg-color);
   color: var( --tg-theme-text-color);
