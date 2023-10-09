@@ -137,6 +137,7 @@ export const DoctorDashboard: FC<{
           <TabPane tab="Past Appointments" key="2">
             {pastAppointments.map((app) => (
               <div key={app.id} className="profile">
+                <div className="text-center">
                 <img
                   src={
                     // Placeholder image for now
@@ -145,12 +146,11 @@ export const DoctorDashboard: FC<{
                   className="profile-img"
                   alt={`Patient ${app.patientName}`}
                 />
-                <div>
                   <h3 className="profile-name">{app.patientName}</h3>
-                  <p className="profile-role">Date: {app.date}</p>
-                  <p className="profile-role">Time: {app.slot}</p>
                 </div>
                 <div className="text-center">
+                  <p className="profile-role">Date: {app.date}</p>
+                  <p className="profile-role">Time: {app.slot}</p>
                   <Button
                     onClick={() =>
                       navigate(`/past_appointment_doctor/${app.id}`)

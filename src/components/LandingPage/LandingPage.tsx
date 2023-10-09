@@ -17,9 +17,9 @@ export const LandingPage: FC<{
   const navigate = useNavigate();
   const userId = window.Telegram.WebApp.initDataUnsafe.user.id;
 
-  
   useEffect(() => {
     console.log("Setting up landing page");
+    window.Telegram.WebApp.expand();
     // check user exists and logged in
     const checkUserExistsAndLoggedInPatient = async () => {
       const docRef = doc(db, "patients", userId.toString());
@@ -36,7 +36,7 @@ export const LandingPage: FC<{
         window.Telegram.WebApp.MainButton.setText("REGISTER AS A PATIENT");
       }
       setLoading(false);
-    }
+    };
     const checkUserExistsAndLoggedInDoctor = async () => {
       const docRef = doc(db, "doctors", userId.toString());
       const docSnap = await getDoc(docRef);
@@ -52,11 +52,11 @@ export const LandingPage: FC<{
         window.Telegram.WebApp.MainButton.setText("REGISTER AS A DOCTOR");
       }
       setLoading(false);
-    }
+    };
     checkUserExistsAndLoggedInPatient();
     checkUserExistsAndLoggedInDoctor();
   }, [navigate, userId]);
-    
+
   const checkUserExists = async (collectionName: string) => {
     const userRef = doc(db, collectionName, userId.toString());
     const userSnap = await getDoc(userRef);
@@ -64,11 +64,14 @@ export const LandingPage: FC<{
   };
 
   const handleDoctorRegister = async () => {
+    window.Telegram.WebApp.MainButton.setText("CHECKING ACCOUNT...");
     window.Telegram.WebApp.MainButton.show();
     window.Telegram.WebApp.MainButton.showProgress();
     const exists = await checkUserExists("doctors");
     if (exists) {
-      window.Telegram.WebApp.MainButton.setText("ACCOUNT EXISTS, Logging in...");
+      window.Telegram.WebApp.MainButton.setText(
+        "ACCOUNT EXISTS, Logging in..."
+      );
       const userRef = doc(db, "doctors", userId.toString());
       await updateDoc(userRef, {
         loggedIn: true,
@@ -80,16 +83,17 @@ export const LandingPage: FC<{
     }
     window.Telegram.WebApp.MainButton.hideProgress();
     window.Telegram.WebApp.MainButton.hide();
-
   };
 
   const handlePatientRegister = async () => {
+    window.Telegram.WebApp.MainButton.setText("CHECKING ACCOUNT...");
     window.Telegram.WebApp.MainButton.show();
-
     window.Telegram.WebApp.MainButton.showProgress();
     const exists = await checkUserExists("patients");
     if (exists) {
-      window.Telegram.WebApp.MainButton.setText("ACCOUNT EXISTS, Logging in...");
+      window.Telegram.WebApp.MainButton.setText(
+        "ACCOUNT EXISTS, Logging in..."
+      );
       const userRef = doc(db, "patients", userId.toString());
       await updateDoc(userRef, {
         loggedIn: true,
@@ -101,13 +105,10 @@ export const LandingPage: FC<{
     }
     window.Telegram.WebApp.MainButton.hideProgress();
     window.Telegram.WebApp.MainButton.hide();
-
   };
 
   if (loading) {
-    return (
-      <Loader />
-    );
+    return <Loader />;
   }
 
   return (
@@ -149,18 +150,25 @@ export const LandingPage: FC<{
               style={{
                 fontSize: "1rem",
                 fontWeight: "bold",
+                lineHeight: "1.5rem",
               }}
             >
               Bridging the Universe Between Patients and Doctors.
             </h2>
           </header>
           <div className="contentWrapper d-flex justify-content-center align-items-center flex-column gap-10">
-              <div className="circularBigButton -blue"  onClick={handleDoctorRegister}>
-                Register as a Doctor
-              </div>
-              <div className="circularBigButton -salmon"  onClick={handlePatientRegister}>
-                Register as a Patient
-              </div>
+            <div
+              className="circularBigButton -salmon"
+              onClick={handlePatientRegister}
+            >
+              Continue as a Patient
+            </div>
+            <div
+              className="circularBigButton -blue"
+              onClick={handleDoctorRegister}
+            >
+              Continue as a Doctor
+            </div>
           </div>
         </div>
       </ConfigProvider>

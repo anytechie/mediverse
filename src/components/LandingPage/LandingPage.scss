@@ -1,70 +1,80 @@
 .landing_page {
-    padding: 30px
+  padding: 30px;
+  max-height: 100vh;
 }
+
+.landing_page .contentWrapper {
+  background: var(--tg-theme-bg-color);
+  color: var(--tg-theme-text-color) !important;
+  border-radius: 10px;
+  margin: 5px 0;
+  box-sizing: border-box;
+}
+
 .circularBigButton {
-    display: flex;
-    overflow: hidden;
-  
-    margin: 10px;
-    padding: 12px 12px;
-  
-    cursor: pointer;
-    user-select: none;
+  display: flex;
+  overflow: hidden;
+
+  margin: 10px;
+  padding: 12px 12px;
+
+  cursor: pointer;
+  user-select: none;
+  transition: all 150ms linear;
+  text-align: center;
+  white-space: nowrap;
+  text-decoration: none !important;
+  text-transform: none;
+
+  color: #fff;
+  border: 0 none;
+  border-radius: 36px;
+
+  font-size: 22px;
+  font-weight: 500;
+  line-height: 1.3;
+  height: 75px;
+  width: 90vw;
+
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+
+  justify-content: center;
+  align-items: center;
+
+  box-shadow: 2px 5px 10px var(--color-smoke);
+
+  &:hover {
     transition: all 150ms linear;
-    text-align: center;
-    white-space: nowrap;
-    text-decoration: none !important;
-    text-transform: none;
-  
-    color: #fff;
-    border: 0 none;
-    border-radius: 36px;
-  
-    font-size: 22px;
-    font-weight: 500;
-    line-height: 1.3;
-    height: 100px;
-    width: 100rem;
-  
-    -webkit-appearance: none;
-    -moz-appearance:    none;
-    appearance:         none;
-   
-    justify-content: center;
-    align-items: center;
-    
-    box-shadow: 2px 5px 10px var(--color-smoke);
-  
-    &:hover {
-      transition: all 150ms linear;
-  
-      opacity: .85;
-    }
-    
-    &:active {
-      transition: all 150ms linear;
-      opacity: .75;
-    }
-    
-    &:focus {
-      outline: 1px dotted #959595;
-      outline-offset: -4px;
-    }
+
+    opacity: 0.85;
   }
 
-  .circularBigButton.-blue {
-    --color-ocean:  #416dea;
-    --color-snow: #FFFFFF;
-    --color-salmon: #F32C52;
-    color: var(--color-snow);
-    background: var(--color-ocean);
+  &:active {
+    transition: all 150ms linear;
+    opacity: 0.75;
   }
-  
-  .circularBigButton.-salmon {
-    --color-ocean:  #416dea;
-    --color-snow: #FFFFFF;
-    --color-salmon: #F32C52;
 
-    color: var(--color-snow);
-    background: var(--color-salmon);
+  &:focus {
+    outline: 1px dotted #959595;
+    outline-offset: -4px;
   }
+}
+
+.circularBigButton.-blue {
+  --color-ocean: #416dea;
+  --color-snow: #ffffff;
+  --color-salmon: #f32c52;
+  color: var(--color-snow);
+  background: var(--color-ocean);
+}
+
+.circularBigButton.-salmon {
+  --color-ocean: #416dea;
+  --color-snow: #ffffff;
+  --color-salmon: #f32c52;
+
+  color: var(--color-snow);
+  background: var(--color-salmon);
+}

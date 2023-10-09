@@ -201,7 +201,7 @@ export const RegisterDoctor: FC<{
   }, []);
 
   return (
-    <div>
+    <div className="register_doctor">
       <ConfigProvider
         theme={
           themeParams.text_color
