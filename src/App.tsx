@@ -5,7 +5,6 @@ import "./assets/bootstrap.css";
 import {
   Routes,
   Route,
-  useLocation,
 } from "react-router-dom";
 import { RegisterDoctor } from "./components/RegisterDoctor/RegisterDoctor";
 import { RegisterPatient } from "./components/RegisterPatient/RegisterPatient";
@@ -18,8 +17,6 @@ import PastAppointmentDoctor from "./components/PastAppointmentDoctor/PastAppoin
 import ViewAppointment from "./components/ViewAppointmentPatient/PastAppointmentPatient";
 
 const App = () => {
-  const location = useLocation();
-  console.log(location.pathname)
   const [smoothButtonsTransition, setSmoothButtonsTransition] = useState(false);
   return (
     <WebAppProvider options={{ smoothButtonsTransition }}>
