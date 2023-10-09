@@ -143,7 +143,7 @@ export const LandingPage: FC<{
                 fontWeight: "bold",
               }}
             >
-              Welcome to Medverse
+              Welcome to Mediverse
             </h1>
             <h2
               style={{
