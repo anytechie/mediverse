@@ -18,6 +18,7 @@ export const LandingPage: FC<{
 
   
   useEffect(() => {
+    console.log("Setting up landing page");
     // check user exists and logged in
     const checkUserExistsAndLoggedInPatient = async () => {
       const docRef = doc(db, "patients", userId.toString());
