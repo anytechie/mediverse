@@ -32,17 +32,19 @@ export const PatientDashboard: FC<{
   const [upcomingAppointments, setUpcomingAppointments] = useState([]);
   const [pastAppointments, setPastAppointments] = useState([]);
   const [ratings, setRatings] = useState({});
+  const [ratedDoctors, setRatedDoctors] = useState([]);
 
   useEffect(() => {
-    const fetchUserName = async () => {
+    const fetchUserData = async () => {
       const userRef = doc(db, "patients", userId.toString());
       const userSnap = await getDoc(userRef);
       if (userSnap.exists()) {
         setUserName(userSnap.data().name);
+        setRatedDoctors(userSnap.data().ratedDoctors || []);
       }
     };
 
-    fetchUserName();
+    fetchUserData();
   }, [userId]);
 
   useEffect(() => {
@@ -90,6 +92,7 @@ export const PatientDashboard: FC<{
 
   const handleRateChange = async (doctorId, value) => {
     setRatings((prev) => ({ ...prev, [doctorId]: value }));
+    setRatedDoctors((prev) => [...prev, doctorId]);
 
     // Update the doctor's ratings in the database
     const doctorRef = doc(db, "doctors", doctorId);
@@ -101,6 +104,10 @@ export const PatientDashboard: FC<{
         : [value];
       await updateDoc(doctorRef, { ratings: updatedRatings });
     }
+
+    // Update the user's ratedDoctors in the database
+    const userRef = doc(db, "patients", userId.toString());
+    await updateDoc(userRef, { ratedDoctors: ratedDoctors });
   };
 
   const handleLogout = async () => {
@@ -236,6 +243,7 @@ export const PatientDashboard: FC<{
                   <Rate
                     value={ratings[app.doctorId] || 0}
                     onChange={(value) => handleRateChange(app.doctorId, value)}
+                    disabled={ratedDoctors.includes(app.doctorId)}
                     style={{
                       marginBottom: "10px",
                     }}
