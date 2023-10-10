@@ -4,7 +4,7 @@ import { db } from "../../firebase";
 import { useNavigate, useParams } from "react-router-dom";
 import { ConfigProvider, theme } from "antd";
 import { useThemeParams } from "@vkruglikov/react-telegram-web-app";
-import Patient from "../../assets/patient.png";
+import Patient from "../../assets/patient.jpg";
 import "./PastAppointmentDoctor.scss";
 
 export const PastAppointmentDoctor: FC<{

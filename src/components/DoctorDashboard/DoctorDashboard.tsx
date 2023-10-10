@@ -14,8 +14,7 @@ import { useNavigate } from "react-router-dom";
 import { ConfigProvider, theme } from "antd";
 import { useThemeParams } from "@vkruglikov/react-telegram-web-app";
 import "./DoctorDashboard.scss";
-import Doctor1 from "../../assets/doctor_1.jpg";
-import Doctor2 from "../../assets/doctor_2.jpg";
+import Patient from "../../assets/patient.jpg";
 
 const { TabPane } = Tabs;
 
@@ -132,7 +131,7 @@ export const DoctorDashboard: FC<{
               <div key={app.id} className="profile">
                 <div className="text-center">
                   <img
-                    src={Math.random() > 0.5 ? Doctor1 : Doctor2}
+                    src={Math.random() > 0.5 ? Patient : Patient}
                     className="profile-img"
                     alt={`Patient ${app.patientName}`}
                   />
@@ -155,7 +154,7 @@ export const DoctorDashboard: FC<{
               <div key={app.id} className="profile">
                 <div className="text-center">
                   <img
-                    src={Math.random() > 0.5 ? Doctor1 : Doctor2}
+                    src={Math.random() > 0.5 ? Patient : Patient}
                     className="profile-img"
                     alt={`Patient ${app.patientName}`}
                   />
