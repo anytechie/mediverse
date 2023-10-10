@@ -45,18 +45,43 @@
 
 This idea can be a game-changer. It can bridge the gap and provide a platform for easy consultations.
 
+# How to use
+
+1. Open the bot in Telegram: [Mediverse](https://t.me/MediverseBot) & click on start.
+2. Click on the menu button or button attached to the intro message.
+
+# Screenshots
+
+![Screenshot 1](./screenshots/1.jpg)
+
+## Patient's View
+
+![Screenshot 2](./screenshots/2.jpeg)
+![Screenshot 3](./screenshots/3.jpg)
+![Screenshot 4](./screenshots/4.jpg)
+![Screenshot 5](./screenshots/5.jpg)
+![Screenshot 6](./screenshots/6.jpg)
+![Screenshot 7](./screenshots/7.jpg)
+![Screenshot 8](./screenshots/8.jpg)
+![Screenshot 9](./screenshots/9.jpg)
+
+## Doctor's View
+![Screenshot 9_2](./screenshots/9_2.jpg)
+![Screenshot 9_3](./screenshots/9_3.jpg)
+![Screenshot 9_1](./screenshots/9_1.jpg)
+![Screenshot 12](./screenshots/12.png)
+![Screenshot 11](./screenshots/11.png)
+![Screenshot 14](./screenshots/14.png)
 
 # For Developers
 This project is built using vite and react.js.
-## Usage
+## Developer Usage
 
 ```bash
-# npm
-npm install
+# Install dependencies
+npm install 
+# Run the development server
 npm run dev --host
-```
-```bash
-# yarn
-yarn
-yarn dev --host
+# Build for production
+npm run build
 ```

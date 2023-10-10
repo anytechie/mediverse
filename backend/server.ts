@@ -32,7 +32,7 @@ const unsubscribe = messagesRef.onSnapshot((snapshot) => {
             provider_token: PAYMENT_TOKEN,
             start_parameter: "payment",
             title: "Appointment Fee",
-            description: "You can pay the doctor's fee by clicking the below button",
+            description: "Please pay the below amount for your appointment",
             currency: "USD",
             is_flexible: false,
             need_shipping_address: false,
@@ -48,11 +48,6 @@ const unsubscribe = messagesRef.onSnapshot((snapshot) => {
   });
 });
 
-// Handle payment callbacks
-bot.on("pre_checkout_query", ({ answerPreCheckoutQuery }) =>
-  answerPreCheckoutQuery(true)
-);
-
 bot.command('start', async (ctx) => {
   const caption = `*Welcome to Mediverse 🧑‍⚕️! *\n\nTap the button below to open the app and explore the features of Mediverse!`;
 
@@ -65,6 +60,11 @@ bot.command('start', async (ctx) => {
       parse_mode: 'Markdown',
       reply_markup: keyboard,
   });
+});
+
+bot.on("pre_checkout_query", async (ctx) => {
+  // confirm payment
+  await ctx.answerPreCheckoutQuery(true);
 });
 
 

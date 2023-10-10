@@ -7,12 +7,11 @@ import {
 } from "react";
 import { useThemeParams } from "@vkruglikov/react-telegram-web-app";
 import { ConfigProvider, theme } from "antd";
-import Patient from "../../assets/patient_signup.json";
 import { useNavigate } from "react-router-dom";
 import { Box } from "@mui/material";
 import "./RegisterPatient.scss";
-import Lottie from "react-lottie-player";
 import { doc, setDoc } from "firebase/firestore";
+import Logo from "../../assets/logo.png";
 import { db } from "../../firebase";
 import StyledTextField from "../StyledTextField/StyledTextField";
 
@@ -37,7 +36,6 @@ export const RegisterPatient: FC<{
   };
 
   useEffect(() => {
-
     const handleBackButtonClick = () => {
       navigate(-1);
     };
@@ -52,7 +50,7 @@ export const RegisterPatient: FC<{
       }
 
       try {
-        const patientRef = doc(db, "patients", userId); 
+        const patientRef = doc(db, "patients", userId);
         await setDoc(patientRef, formData);
 
         window.Telegram.WebApp.showPopup({
@@ -74,10 +72,13 @@ export const RegisterPatient: FC<{
     window.Telegram.WebApp.MainButton.setText("REGISTER");
     window.Telegram.WebApp.MainButton.onClick(onSubmit);
     return () => {
-      window.Telegram.WebApp.offEvent("backButtonClicked", handleBackButtonClick);
+      window.Telegram.WebApp.offEvent(
+        "backButtonClicked",
+        handleBackButtonClick
+      );
       window.Telegram.WebApp.MainButton.offClick(onSubmit);
     };
-  }, [formData, navigate]);
+  }, [formData, navigate, userId]);
 
   useEffect(() => {
     window.Telegram.WebApp.MainButton.show();
@@ -109,12 +110,7 @@ export const RegisterPatient: FC<{
       >
         <div className="d-flex flex-column justify-content-center align-items-center">
           <header className="App-header">
-            <Lottie
-              animationData={Patient}
-              play
-              loop={false}
-              style={{ width: 150, height: 150 }}
-            />
+            <img src={Logo} width={200} height={200} />
             <h1
               style={{
                 fontSize: 30,

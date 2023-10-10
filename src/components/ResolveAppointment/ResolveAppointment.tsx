@@ -5,7 +5,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { ConfigProvider, theme } from "antd";
 import { useThemeParams } from "@vkruglikov/react-telegram-web-app";
 import StyledTextField from "../StyledTextField/StyledTextField";
-import Patient from "../../assets/patient.png";
+import Patient from "../../assets/patient.jpg";
 import "./ResolveAppointment.scss";
 
 export const ResolveAppointment: FC<{
@@ -73,7 +73,7 @@ export const ResolveAppointment: FC<{
 
       window.Telegram.WebApp.showPopup({
         title: "Appointment Resolved",
-        message: "Appointment has been resolved successfully",
+        message: "Appointment has been resolved successfully. You can revisit it in the past appointments section.",
         buttons: [{ type: "ok" }],
       });
       navigate("/doctor_dashboard");
@@ -122,11 +122,13 @@ export const ResolveAppointment: FC<{
       <div className="resolve_appointment">
         {appointment && (
           <>
-            <img src={Patient} alt="patient" />
-            <h2>{appointment.patientName}</h2>
-            <p>Date: {appointment.date}</p>
-            <p>Time: {appointment.slot}</p>
-            <p>Problem: {appointment.description}</p>
+            <div className="patient_details">
+              <img src={Patient} alt="patient" />
+              <h2>{appointment.patientName}</h2>
+              <p>Date: {appointment.date}</p>
+              <p>Time: {appointment.slot}</p>
+              <p>Problem: {appointment.description}</p>
+            </div>
             <StyledTextField
               label="Diagnosis"
               multiline

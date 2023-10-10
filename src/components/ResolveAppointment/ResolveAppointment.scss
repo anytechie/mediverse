@@ -5,6 +5,10 @@
     align-items: center;
     justify-content: center;
     text-align: center; // This will center the text of direct children
+    .patient_details {
+      margin: 10px;
+    }
+
     img {
         width: 200px;
         height: 200px;

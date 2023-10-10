@@ -7,11 +7,10 @@ import {
 } from "react";
 import { useThemeParams } from "@vkruglikov/react-telegram-web-app";
 import { ConfigProvider, theme } from "antd";
-import Doctor from "../../assets/doctor.json";
 import { useNavigate } from "react-router-dom";
 import { Box } from "@mui/material";
 import "./RegisterDoctor.scss";
-import Lottie from "react-lottie-player";
+import Logo from "../../assets/logo.png";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import WeekdayPicker from "../WeekdayPicker/WeekdayPicker";
 import { db } from "../../firebase";
@@ -221,11 +220,7 @@ export const RegisterDoctor: FC<{
       >
         <div className="d-flex flex-column justify-content-center align-items-center">
           <header className="App-header">
-            <Lottie
-              animationData={Doctor}
-              play
-              style={{ width: 200, height: 200 }}
-            />
+            <img src={Logo} width={200} height={200} />
             <h1
               style={{
                 fontSize: 30,
@@ -237,67 +232,73 @@ export const RegisterDoctor: FC<{
           </header>
           <div className="contentWrapper">
             <Box component="form" sx={{ mt: 2 }}>
-              <div className={`step ${currentStep === 1 ? "active" : ""}`}>
-                <StyledTextField
-                  label="Name"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleInputChange}
-                />
-                <StyledTextField
-                  label="Email"
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleInputChange}
-                />
-                <StyledTextField
-                  label="Speciality"
-                  name="speciality"
-                  value={formData.speciality}
-                  onChange={handleInputChange}
-                />
-              </div>
-              <div className={`step ${currentStep === 2 ? "active" : ""}`}>
-                <StyledTextField
-                  label="Experience (Years)"
-                  type="number"
-                  name="experience"
-                  value={formData.experience}
-                  onChange={handleInputChange}
-                />
-                <StyledTextField
-                  label="Location (Area, City)"
-                  name="location"
-                  value={formData.location}
-                  onChange={handleInputChange}
-                />
-                <StyledTextField
-                  label="Consultation Fee ($)"
-                  type="number"
-                  name="consultationFee"
-                  value={formData.consultationFee}
-                  onChange={handleInputChange}
-                />
-              </div>
-              <div className={`step ${currentStep === 3 ? "active" : ""}`}>
-                <h4>Working Days</h4>
-                <WeekdayPicker onChange={handleDaysChange} />
-                <h4>Start Time</h4>
-                <StyledTextField
-                  type="time"
-                  name="startTime"
-                  value={formData.startTime}
-                  onChange={handleInputChange}
-                />
-                <h4>End Time</h4>
-                <StyledTextField
-                  type="time"
-                  name="endTime"
-                  value={formData.endTime}
-                  onChange={handleInputChange}
-                />
-              </div>
+              {currentStep === 1 && (
+                <div className={`step ${currentStep === 1 ? "active" : ""}`}>
+                  <StyledTextField
+                    label="Name"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleInputChange}
+                  />
+                  <StyledTextField
+                    label="Email"
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleInputChange}
+                  />
+                  <StyledTextField
+                    label="Speciality"
+                    name="speciality"
+                    value={formData.speciality}
+                    onChange={handleInputChange}
+                  />
+                </div>
+              )}
+              {currentStep === 2 && (
+                <div className={`step ${currentStep === 2 ? "active" : ""}`}>
+                  <StyledTextField
+                    label="Experience (Years)"
+                    type="number"
+                    name="experience"
+                    value={formData.experience}
+                    onChange={handleInputChange}
+                  />
+                  <StyledTextField
+                    label="Location (Area, City)"
+                    name="location"
+                    value={formData.location}
+                    onChange={handleInputChange}
+                  />
+                  <StyledTextField
+                    label="Consultation Fee ($)"
+                    type="number"
+                    name="consultationFee"
+                    value={formData.consultationFee}
+                    onChange={handleInputChange}
+                  />
+                </div>
+              )}
+              {currentStep === 3 && (
+                <div className={`step ${currentStep === 3 ? "active" : ""}`}>
+                  <h4>Working Days</h4>
+                  <WeekdayPicker onChange={handleDaysChange} />
+                  <h4>Start Time</h4>
+                  <StyledTextField
+                    type="time"
+                    name="startTime"
+                    value={formData.startTime}
+                    onChange={handleInputChange}
+                  />
+                  <h4>End Time</h4>
+                  <StyledTextField
+                    type="time"
+                    name="endTime"
+                    value={formData.endTime}
+                    onChange={handleInputChange}
+                  />
+                </div>
+              )}
             </Box>
           </div>
         </div>

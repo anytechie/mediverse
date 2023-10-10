@@ -12,7 +12,6 @@
       font-size: 1.5rem; // Adjust font size as needed
       font-weight: bold;
     }
-
   }
 
   .profile {
@@ -39,6 +38,7 @@
     .profile-role {
       color: #9b9b9b;
       font-size: 0.9rem;
+      margin: 8px;
     }
 
     .text-center {
@@ -47,7 +47,7 @@
       align-items: center;
       justify-content: center;
     }
-}
+  }
 
   .logout-button {
     margin-left: auto;

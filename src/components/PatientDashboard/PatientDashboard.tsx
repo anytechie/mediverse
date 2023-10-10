@@ -275,7 +275,7 @@ export const PatientDashboard: FC<{
                   <p className="profile-role">Time: {app.slot}</p>
 
                   <Button
-                    onClick={() => navigate(`/view_past_appointment/${app.id}`)}
+                    onClick={() => navigate(`/past_appointment_patient/${app.id}`)}
                   >
                     View
                   </Button>

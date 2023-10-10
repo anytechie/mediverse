@@ -250,11 +250,11 @@ Your invoice will be sent in the next message.
         <div className="book_appointment">
           <div className="profile">
             <img
-              src={doctor.profileImage || (Math.random() > 0.5 ? Doctor1 : Doctor2)}
+              src={doctor.profileImage || (doctor.name.length % 2 ? Doctor1 : Doctor2)}
               alt={`Dr. ${doctor.name}`}
               className="profile-img"
             />
-            <h3>{doctor.name}</h3>
+            <h3>Dr. {doctor.name}</h3>
             <p>{doctor.speciality}</p>
             <p>{doctor.experience} years of experience</p>
           </div>

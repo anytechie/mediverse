@@ -4,7 +4,7 @@ import { db } from "../../firebase";
 import { useNavigate, useParams } from "react-router-dom";
 import { ConfigProvider, theme } from "antd";
 import { useThemeParams } from "@vkruglikov/react-telegram-web-app";
-import Patient from "../../assets/patient.png";
+import Doctor from "../../assets/doctor_1.jpg";
 import "./PastAppointmentPatient.scss";
 
 export const ViewAppointment: FC<{
@@ -64,7 +64,7 @@ export const ViewAppointment: FC<{
       <div className="past_appointment_patient">
         {appointment && (
           <>
-            <img src={Patient} alt="patient" />
+            <img src={Doctor} alt="patient" />
 
             <h2>Dr. {appointment.doctorName}</h2>
             <p>Date: {appointment.date}</p>
