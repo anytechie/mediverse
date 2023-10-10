@@ -1,8 +1,7 @@
-import { Telegraf } from "telegraf";
+import { Markup, Telegraf } from "telegraf";
 import express from "express";
 import admin from "firebase-admin";
 import process from "process";
-
 import serviceAccount from "./firebase-key.json";
 import { BOT_TOKEN, PAYMENT_TOKEN } from "./config";
 
@@ -54,6 +53,21 @@ bot.on("pre_checkout_query", ({ answerPreCheckoutQuery }) =>
   answerPreCheckoutQuery(true)
 );
 
+bot.command('start', async (ctx) => {
+  const caption = `*Welcome to Mediverse 🧑‍⚕️! *\n\nTap the button below to open the app and explore the features of Mediverse!`;
+
+  const keyboard = Markup.inlineKeyboard([
+      Markup.button.webApp('Open Mediverse', "https://mediverse.web.app/"),
+  ]).reply_markup;
+
+  await ctx.replyWithVideo("https://firebasestorage.googleapis.com/v0/b/mediverse-c3d3c.appspot.com/o/output.mp4?alt=media", {
+      caption: caption,
+      parse_mode: 'Markdown',
+      reply_markup: keyboard,
+  });
+});
+
+
 bot.on("successful_payment", async (ctx) => {
   // send a message to the user saying that payment was received
   await ctx.reply(
@@ -71,3 +85,5 @@ process.on("SIGINT", () => {
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
+
+bot.launch();

@@ -8,6 +8,7 @@ import {
   where,
   updateDoc,
 } from "firebase/firestore";
+import { Rate } from "antd";
 import { db } from "../../firebase";
 import { Button, ConfigProvider, Tabs, theme } from "antd";
 import Search from "antd/es/input/Search";
@@ -30,6 +31,7 @@ export const PatientDashboard: FC<{
   const [userName, setUserName] = useState("");
   const [upcomingAppointments, setUpcomingAppointments] = useState([]);
   const [pastAppointments, setPastAppointments] = useState([]);
+  const [ratings, setRatings] = useState({});
 
   useEffect(() => {
     const fetchUserName = async () => {
@@ -85,6 +87,21 @@ export const PatientDashboard: FC<{
 
     fetchDoctors();
   }, []);
+
+  const handleRateChange = async (doctorId, value) => {
+    setRatings((prev) => ({ ...prev, [doctorId]: value }));
+
+    // Update the doctor's ratings in the database
+    const doctorRef = doc(db, "doctors", doctorId);
+    const doctorSnap = await getDoc(doctorRef);
+    if (doctorSnap.exists()) {
+      const doctorData = doctorSnap.data();
+      const updatedRatings = doctorData.ratings
+        ? [...doctorData.ratings, value]
+        : [value];
+      await updateDoc(doctorRef, { ratings: updatedRatings });
+    }
+  };
 
   const handleLogout = async () => {
     const userRef = doc(db, "patients", userId.toString());
@@ -182,6 +199,15 @@ export const PatientDashboard: FC<{
                   </p>
                 </div>
                 <div className="text-center">
+                  <Rate
+                    value={
+                      doctor.ratings
+                        ? doctor.ratings.reduce((a, b) => a + b, 0) /
+                          doctor.ratings.length
+                        : 0
+                    }
+                    disabled
+                  />
                   <p className="profile-role">{doctor.location}</p>
                   <p className="profile-role">
                     Consultation Fee: ${doctor.consultationFee}
@@ -206,9 +232,17 @@ export const PatientDashboard: FC<{
                   />
                   <h3 className="profile-name">{app.doctorName}</h3>
                 </div>
-                <div className="text-center">
+                <div className="text-center d-flex flex-column">
+                  <Rate
+                    value={ratings[app.doctorId] || 0}
+                    onChange={(value) => handleRateChange(app.doctorId, value)}
+                    style={{
+                      marginBottom: "10px",
+                    }}
+                  />
                   <p className="profile-role">Date: {app.date}</p>
                   <p className="profile-role">Time: {app.slot}</p>
+
                   <Button
                     onClick={() => navigate(`/view_past_appointment/${app.id}`)}
                   >
