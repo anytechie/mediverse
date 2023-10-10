@@ -1,10 +1,11 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { getAuth, signInAnonymously, signOut } from "firebase/auth";
+import { getAuth, signInAnonymously } from "firebase/auth";
 
 export const AuthContext = createContext({
   currentUser: null,
 });
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useAuth = () => {
   return useContext(AuthContext);
 };
