@@ -180,9 +180,9 @@ You can contact the patient by clicking [here](tg://user?id=${patientId}).
 *Description*: ${formData.description}        
 *Consultation Fee*: $${doctor.consultationFee}
 Please contact the doctor at the scheduled time by clicking [here](tg://user?id=${doctorId}).
-You can pay the consultation fee by clicking on the link below.
+Your invoice will be sent in the next message.
           `,
-          paymentLink: `https://pay.telegram.org/${doctor.consultationFee}`,
+          amount: doctor.consultationFee,
         });
 
         window.Telegram.WebApp.MainButton.hideProgress();

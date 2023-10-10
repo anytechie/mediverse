@@ -26,12 +26,12 @@
     - Filters can help narrow down the search results.
 
 4. **Booking & Scheduling**:
-    - Patients can book appointments with doctors.
+    - Patients can schedule appointments with doctors.
     - Bookings can be done based on based on doctor's availability.
 
 5. **Chat Consultation**:
-    - For minor queries, patients can chat with doctors directly.
-    - Option for voice or video consultations (via Telegram's built-in voice/video calls).
+    - Patients can chat with doctors directly.
+    - Option for voice or video consultations via Telegram's built-in voice/video calls.
 
 6. **Ratings & Reviews**:
     - After consultations, patients can rate and review doctors.
@@ -40,7 +40,7 @@
 7. **Privacy & Security**:
     - Doctors and patients can only see relevant information.
 
-8. **Payment**:
+8. **Payments**:
     - Patients can easily pay for consultations or appointments using Telegram's built-in payment system.
 
 This idea can be a game-changer. It can bridge the gap and provide a platform for easy consultations.

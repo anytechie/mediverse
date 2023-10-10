@@ -48,23 +48,28 @@ export const ResolveAppointment: FC<{
   useEffect(() => {
     const handleResolve = async () => {
       const appointmentRef = doc(db, "appointments", appointmentId);
-      await updateDoc(appointmentRef, {
-        diagnosis,
-        treatment,
-        done: true,
-      });
+      try {
+        await updateDoc(appointmentRef, {
+          diagnosis,
+          treatment,
+          done: true,
+        });
 
-      const doctorId = appointment.doctorId;
-      const patientId = appointment.patientId;
-      await addDoc(collection(db, "messages"), {
-        userId: doctorId,
-        content: `The appointment for *${appointment.patientName}* has been resolved successfully`,
-      });
+        const doctorId = appointment.doctorId;
+        const patientId = appointment.patientId;
+        await addDoc(collection(db, "messages"), {
+          userId: doctorId,
+          content: `The appointment for *${appointment.patientName}* has been resolved successfully`,
+        });
 
-      await addDoc(collection(db, "messages"), {
-        userId: patientId,
-        content: `Your appointment with *Dr. ${appointment.doctorName}* has been resolved successfully`,
-      });
+        await addDoc(collection(db, "messages"), {
+          userId: patientId,
+          content: `Your appointment with *Dr. ${appointment.doctorName}* has been resolved successfully. Please find the diagnosis and treatment below:\n\nDiagnosis: ${diagnosis}\n\nTreatment: ${treatment}`,
+        });
+      } catch (error) {
+        console.log(error);
+        window.Telegram.WebApp.showAlert("Error resolving appointment");
+      }
 
       window.Telegram.WebApp.showPopup({
         title: "Appointment Resolved",
@@ -78,13 +83,22 @@ export const ResolveAppointment: FC<{
     return () => {
       window.Telegram.WebApp.MainButton.offClick(handleResolve);
     };
-  }, [appointment?.doctorId, appointment?.doctorName, appointment?.patientId, appointment?.patientName, appointmentId, diagnosis, navigate, treatment]);
+  }, [
+    appointment?.doctorId,
+    appointment?.doctorName,
+    appointment?.patientId,
+    appointment?.patientName,
+    appointmentId,
+    diagnosis,
+    navigate,
+    treatment,
+  ]);
 
   useEffect(() => {
     window.Telegram.WebApp.MainButton.show();
     return () => {
       window.Telegram.WebApp.MainButton.hide();
-    }
+    };
   }, []);
 
   return (
