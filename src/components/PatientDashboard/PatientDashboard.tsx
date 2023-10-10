@@ -15,7 +15,8 @@ import Search from "antd/es/input/Search";
 import { useNavigate } from "react-router-dom";
 import { useThemeParams } from "@vkruglikov/react-telegram-web-app";
 import Doctor1 from "../../assets/doctor_1.jpg";
-import Doctor2 from "../../assets/doctor_2.jpg";
+import Doctor2 from "../../assets/doctor_2.png";
+import Doctor3 from "../../assets/doctor_3.png";
 import "./PatientDashboard.scss";
 
 const { TabPane } = Tabs;
@@ -33,7 +34,6 @@ export const PatientDashboard: FC<{
   const [pastAppointments, setPastAppointments] = useState([]);
   const [ratings, setRatings] = useState({});
   const [activeTab, setActiveTab] = useState("2");
-
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -158,13 +158,24 @@ export const PatientDashboard: FC<{
           </Button>
         </div>
 
-        <Tabs defaultActiveKey="2" centered activeKey={activeTab} onChange={setActiveTab}>
+        <Tabs
+          defaultActiveKey="2"
+          centered
+          activeKey={activeTab}
+          onChange={setActiveTab}
+        >
           <TabPane tab="Upcoming" key="1">
-            {upcomingAppointments.map((app) => (
+            {upcomingAppointments.map((app, idx) => (
               <div key={app.id} className="profile">
                 <div className="text-center">
                   <img
-                    src={Math.random() > 0.5 ? Doctor1 : Doctor2}
+                    src={
+                      idx % 3 === 0
+                        ? Doctor1
+                        : idx % 3 === 1
+                        ? Doctor2
+                        : Doctor3
+                    }
                     className="profile-img"
                     alt={`Doctor ${app.doctorName}`}
                   />
@@ -191,11 +202,17 @@ export const PatientDashboard: FC<{
               size="large"
               onChange={(e) => setSearchTerm(e.target.value)}
             />
-            {filteredDoctors.map((doctor) => (
+            {filteredDoctors.map((doctor, idx) => (
               <div key={doctor.id} className="profile">
                 <div className="text-center">
                   <img
-                    src={Math.random() > 0.5 ? Doctor1 : Doctor2}
+                    src={
+                      idx % 3 === 0
+                        ? Doctor1
+                        : idx % 3 === 1
+                        ? Doctor2
+                        : Doctor3
+                    }
                     className="profile-img"
                     alt={`Dr. ${doctor.name}`}
                   />
@@ -229,11 +246,17 @@ export const PatientDashboard: FC<{
           </TabPane>
 
           <TabPane tab="History" key="3">
-            {pastAppointments.map((app) => (
+            {pastAppointments.map((app, idx) => (
               <div key={app.id} className="profile">
                 <div className="text-center">
                   <img
-                    src={Math.random() > 0.5 ? Doctor1 : Doctor2}
+                    src={
+                      idx % 3 === 0
+                        ? Doctor1
+                        : idx % 3 === 1
+                        ? Doctor2
+                        : Doctor3
+                    }
                     className="profile-img"
                     alt={`Doctor ${app.doctorName}`}
                   />

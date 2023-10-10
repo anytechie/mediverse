@@ -15,7 +15,7 @@ import { useThemeParams } from "@vkruglikov/react-telegram-web-app";
 import { Box, MenuItem } from "@mui/material";
 import "./BookAppointment.scss";
 import Doctor1 from "../../assets/doctor_1.jpg";
-import Doctor2 from "../../assets/doctor_2.jpg";
+import Doctor2 from "../../assets/doctor_2.png";
 import StyledTextField from "../StyledTextField/StyledTextField";
 
 export const BookAppointment: FC<{
