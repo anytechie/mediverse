@@ -15,8 +15,8 @@ import Search from "antd/es/input/Search";
 import { useNavigate } from "react-router-dom";
 import { useThemeParams } from "@vkruglikov/react-telegram-web-app";
 import Doctor1 from "../../assets/doctor_1.jpg";
-import Doctor2 from "../../assets/doctor_2.png";
-import Doctor3 from "../../assets/doctor_3.png";
+import Doctor2 from "../../assets/doctor_2.jpg";
+import Doctor3 from "../../assets/doctor_3.jpg";
 import "./PatientDashboard.scss";
 
 const { TabPane } = Tabs;
