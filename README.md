@@ -52,9 +52,12 @@ This idea can be a game-changer. It can bridge the gap and provide a platform fo
 
 # Screenshots
 
+## Landing Page
 ![Screenshot 1](./screenshots/1.jpg)
 
 ## Patient's View
+
+### Ordered by sequence
 
 ![Screenshot 2](./screenshots/2.jpeg)
 ![Screenshot 3](./screenshots/3.jpg)
