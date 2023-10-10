@@ -32,7 +32,8 @@ export const PatientDashboard: FC<{
   const [upcomingAppointments, setUpcomingAppointments] = useState([]);
   const [pastAppointments, setPastAppointments] = useState([]);
   const [ratings, setRatings] = useState({});
-  const [ratedDoctors, setRatedDoctors] = useState([]);
+  const [activeTab, setActiveTab] = useState("2");
+
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -40,7 +41,7 @@ export const PatientDashboard: FC<{
       const userSnap = await getDoc(userRef);
       if (userSnap.exists()) {
         setUserName(userSnap.data().name);
-        setRatedDoctors(userSnap.data().ratedDoctors || []);
+        setRatings(userSnap.data().ratings || {});
       }
     };
 
@@ -88,11 +89,10 @@ export const PatientDashboard: FC<{
     };
 
     fetchDoctors();
-  }, []);
+  }, [activeTab]);
 
   const handleRateChange = async (doctorId, value) => {
     setRatings((prev) => ({ ...prev, [doctorId]: value }));
-    setRatedDoctors((prev) => [...prev, doctorId]);
 
     // Update the doctor's ratings in the database
     const doctorRef = doc(db, "doctors", doctorId);
@@ -107,7 +107,7 @@ export const PatientDashboard: FC<{
 
     // Update the user's ratedDoctors in the database
     const userRef = doc(db, "patients", userId.toString());
-    await updateDoc(userRef, { ratedDoctors: ratedDoctors });
+    await updateDoc(userRef, { ratings: { ...ratings, [doctorId]: value } });
   };
 
   const handleLogout = async () => {
@@ -158,7 +158,7 @@ export const PatientDashboard: FC<{
           </Button>
         </div>
 
-        <Tabs defaultActiveKey="2" centered>
+        <Tabs defaultActiveKey="2" centered activeKey={activeTab} onChange={setActiveTab}>
           <TabPane tab="Upcoming" key="1">
             {upcomingAppointments.map((app) => (
               <div key={app.id} className="profile">
@@ -243,7 +243,7 @@ export const PatientDashboard: FC<{
                   <Rate
                     value={ratings[app.doctorId] || 0}
                     onChange={(value) => handleRateChange(app.doctorId, value)}
-                    disabled={ratedDoctors.includes(app.doctorId)}
+                    disabled={ratings[app.doctorId] !== undefined}
                     style={{
                       marginBottom: "10px",
                     }}
